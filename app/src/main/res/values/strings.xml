@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Complex UI App</string>
+    <string name="back">back</string>
+    <string name="airdrop">airdrop</string>
+    <string name="baer">baer</string>
+    <string name="win_10_with_bober">Win 10$ with BOBER</string>
+    <string name="lst_gaming">Gaming</string>
+    <string name="lst_airdrop">Airdrop</string>
+    <string name="lst_nft">NFT</string>
+    <string name="desc_text">BOBER is the first meme coin that flipped the entire MultiversX BOBER was inspired by a viral video meme with a beaver this is sample text for expediting view, BOBER is the first meme coin that flipped the entire MultiversX BOBER was inspired by a viral video meme with a beaver this is sample text for expediting view.</string>
+    <string name="_350_nft_s">350 NFT\'s</string>
+    <string name="airdrop_timeline">Airdrop Timeline</string>
+    <string name="hook">hook</string>
+    <string name="social_links">Social Links</string>
+</resources>
