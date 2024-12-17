@@ -27,6 +27,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -100,13 +101,15 @@ fun CvImageView(
     painter: Int,
     contentDes: String,
     contextScale: ContentScale = ContentScale.Fit,
-    modifier: Modifier = Modifier.padding(0.sdp)
+    modifier: Modifier = Modifier.padding(0.sdp),
+    colorFilter: ColorFilter? = null
 ) {
     Image(
         painter = painterResource(painter),
         contentDes,
         modifier = modifier,
-        contentScale = contextScale
+        contentScale = contextScale,
+        colorFilter = colorFilter
     )
 }
 

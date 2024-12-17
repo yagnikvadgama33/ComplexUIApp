@@ -37,8 +37,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.example.complexuiapp.components.AirdropTimeline
 import com.example.complexuiapp.components.BearContent
+import com.example.complexuiapp.components.NotifyViewWithTimer
+import com.example.complexuiapp.components.CustomTabBar
+import com.example.complexuiapp.components.EarmMorePointsTask
+import com.example.complexuiapp.components.EarnMoreXifiPointsHeader
 import com.example.complexuiapp.components.ExpandableText
+import com.example.complexuiapp.components.LegalDisclaimer
 import com.example.complexuiapp.components.MiddleGradientBackground
+import com.example.complexuiapp.components.MoreAboutBober
+import com.example.complexuiapp.components.AirdropContent
 import com.example.complexuiapp.components.SocialLinksBottomSheet
 import com.example.complexuiapp.components.SocialMediaIcons
 import com.example.complexuiapp.components.WaveItems
@@ -113,6 +120,7 @@ fun MainAScreenUI(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(state = scrollState)
+            .background(Color.White)
     ) {
         Column(
             modifier = Modifier
@@ -200,9 +208,39 @@ fun MainAScreenUI(
                 Spacer(Modifier.height(20.sdp))
 
                 //Airdrop Timeline
-                AirdropTimeline()
+                AirdropTimeline(stringResource(R.string.airdrop_timeline))
+
+                Spacer(Modifier.height(12.sdp))
+
+                //Do this task and Earn More Xifi Points
+                EarnMoreXifiPointsHeader()
+
+                Spacer(Modifier.height(18.sdp))
+
+                EarmMorePointsTask()
+
+                Spacer(Modifier.height(12.sdp))
+
+                //Tab Bar
+                CustomTabBar()
+
+                Spacer(Modifier.height(22.sdp))
+
+                //More About Bober Section
+                MoreAboutBober()
+
+                Spacer(Modifier.height(32.sdp))
+
+                //Legal Disclaimer
+                LegalDisclaimer()
+
+                Spacer(Modifier.height(42.sdp))
+
             }
         }
+
+        //Bottom Notify View
+        NotifyViewWithTimer()
     }
 
     //Check for icon click

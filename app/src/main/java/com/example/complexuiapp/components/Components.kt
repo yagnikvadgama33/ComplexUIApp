@@ -1,10 +1,15 @@
 package com.example.complexuiapp.components
 
+import android.os.CountDownTimer
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,54 +19,57 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -74,16 +82,26 @@ import com.example.complexuiapp.helper.ssp
 import com.example.complexuiapp.ui.theme.bgCalenderActiveColor
 import com.example.complexuiapp.ui.theme.bgCalenderDeactiveColor
 import com.example.complexuiapp.ui.theme.borderColor
+import com.example.complexuiapp.ui.theme.bulletPointColor
 import com.example.complexuiapp.ui.theme.headerTxtColor
+import com.example.complexuiapp.ui.theme.lineColor
 import com.example.complexuiapp.ui.theme.productSansBold
+import com.example.complexuiapp.ui.theme.productSansMedium
 import com.example.complexuiapp.ui.theme.productSansRegular
+import com.example.complexuiapp.ui.theme.purperTextColor
+import com.example.complexuiapp.ui.theme.purpleBgColor
+import com.example.complexuiapp.ui.theme.purpleColor
 import com.example.complexuiapp.ui.theme.robotoMedium
 import com.example.complexuiapp.ui.theme.robotoRegular
 import com.example.complexuiapp.ui.theme.sfProDisplayBold
 import com.example.complexuiapp.ui.theme.sfProDisplayRegular
+import com.example.complexuiapp.ui.theme.sfProDisplaySemiBold
 import com.example.complexuiapp.ui.theme.subtitleTxtColor
+import com.example.complexuiapp.ui.theme.txtPinkColor
+import com.example.complexuiapp.ui.theme.unselectedTextColor
 import com.example.complexuiapp.ui.theme.wavwColor
 import kotlin.math.PI
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -153,6 +171,17 @@ fun DotSeparatedList(items: List<String>) {
 
 @Composable
 fun SocialMediaIcons(onClick: () -> Unit) {
+
+    val icons = listOf(
+        Pair(R.drawable.ic_internet, "Facebook"),
+        Pair(R.drawable.ic_x, "Twitter"),
+        Pair(R.drawable.ic_telegram, "Telegram"),
+        Pair(R.drawable.ic_mail, "Coingeko"),
+        Pair(R.drawable.ic_internet, "Facebook"),
+        Pair(R.drawable.ic_x, "Twitter"),
+        Pair(R.drawable.ic_telegram, "Telegram"),
+    )
+
     Box(
         modifier = Modifier.border(
             1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
@@ -176,13 +205,13 @@ fun SocialMediaIcons(onClick: () -> Unit) {
                     painter = R.drawable.ic_internet, "internet", modifier = Modifier.size(24.sdp)
                 )
                 CvImageView(
-                    painter = R.drawable.ic_x, "internet", modifier = Modifier.size(24.sdp)
+                    painter = R.drawable.ic_x, "x", modifier = Modifier.size(24.sdp)
                 )
                 CvImageView(
-                    painter = R.drawable.ic_telegram, "internet", modifier = Modifier.size(24.sdp)
+                    painter = R.drawable.ic_telegram, "telegram", modifier = Modifier.size(24.sdp)
                 )
                 CvImageView(
-                    painter = R.drawable.ic_mail, "internet", modifier = Modifier.size(24.sdp)
+                    painter = R.drawable.ic_mail, "mail", modifier = Modifier.size(24.sdp)
                 )
             }
             CvImageView(
@@ -213,8 +242,7 @@ fun SocialLinksBottomSheet() {
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                Modifier
-                    .fillMaxWidth()
+                Modifier.fillMaxWidth()
             ) {
                 // Title
                 Text(
@@ -251,8 +279,7 @@ fun SocialLinksGrid(icons: List<Pair<Int, String>>) {
     ) {
         for (rowIcons in icons.chunked(4)) {
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()
             ) {
                 rowIcons.forEach { (icon, label) ->
                     SocialLinkItem(icon = icon, label = label)
@@ -264,14 +291,13 @@ fun SocialLinksGrid(icons: List<Pair<Int, String>>) {
 
 @Composable
 fun SocialLinkItem(icon: Int, label: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    val interactionSource = remember { MutableInteractionSource() }
+    Column(horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .size(80.dp)
-            .clickable {
-
-            }
-    ) {
+            .clickable(
+                interactionSource = interactionSource, indication = null
+            ) {}) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -333,59 +359,61 @@ fun MiddleGradientBackground() {
 
 @Composable
 fun ExpandableText(
-    text: String,
     modifier: Modifier = Modifier,
-    minimizedMaxLines: Int = 3,
-    readMoreText: String = "...Read More"
-) {
-    var expanded by remember { mutableStateOf(false) }
-    var cutText by remember { mutableStateOf<String?>(null) }
-    val textLayoutResultState = remember { mutableStateOf<TextLayoutResult?>(null) }
-    val seeMoreSizeState = remember { mutableStateOf<IntSize?>(null) }
-    val seeMoreOffsetState = remember { mutableStateOf<Offset?>(null) }
-
-    val textLayoutResult = textLayoutResultState.value
-    val seeMoreSize = seeMoreSizeState.value
-
-    LaunchedEffect(text, expanded, textLayoutResult, seeMoreSize) {
-        val lastLineIndex = minimizedMaxLines - 1
-        if (!expanded && textLayoutResult != null && seeMoreSize != null && lastLineIndex + 1 == textLayoutResult.lineCount && textLayoutResult.isLineEllipsized(
-                lastLineIndex
-            )
-        ) {
-            var lastCharIndex = textLayoutResult.getLineEnd(lastLineIndex, visibleEnd = true) + 1
-            var charRect: Rect
-            do {
-                lastCharIndex -= 1
-                charRect = textLayoutResult.getCursorRect(lastCharIndex)
-            } while (charRect.left > textLayoutResult.size.width - seeMoreSize.width)
-            seeMoreOffsetState.value = Offset(charRect.left, charRect.bottom - seeMoreSize.height)
-            cutText = text.substring(startIndex = 0, endIndex = lastCharIndex)
-        }
-    }
-
-    Text(text = if (!expanded && cutText != null) {
-        buildAnnotatedString {
-            append(cutText ?: "")
-            append(" ")
-            withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
-                append(readMoreText)
-            }
-        }
-    } else {
-        AnnotatedString(text)
-    },
-        maxLines = if (expanded) Int.MAX_VALUE else minimizedMaxLines,
-        overflow = TextOverflow.Ellipsis,
-        onTextLayout = { textLayoutResultState.value = it },
-        modifier = modifier.clickable {
-            expanded = !expanded
-            if (!expanded) cutText = null
-        },
-        style = robotoRegular,
-        color = headerTxtColor,
-        fontSize = 13.ssp
+    textModifier: Modifier = Modifier,
+    text: String,
+    collapsedMaxLine: Int = 3,
+    showMoreText: String = stringResource(R.string.read_more),
+    showMoreStyle: SpanStyle = SpanStyle(
+        fontWeight = FontWeight.Bold, brush = Brush.linearGradient(
+            colors = listOf(Color(0xFFFA8662), Color(0xFF8B37F7)), tileMode = TileMode.Repeated
+        )
     )
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+    var clickable by remember { mutableStateOf(false) }
+    var lastCharIndex by remember { mutableStateOf(0) }
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Box(modifier = Modifier
+        .clickable(
+            interactionSource = interactionSource, indication = null, enabled = clickable
+        ) {
+            isExpanded = !isExpanded
+        }
+        .then(modifier)) {
+
+        Text(
+            text = buildAnnotatedString {
+                if (clickable) {
+                    if (isExpanded) {
+                        append(text)
+                    } else {
+                        val adjustText = text.substring(startIndex = 0, endIndex = lastCharIndex)
+                            .dropLast(showMoreText.length)
+                            .dropLastWhile { Character.isWhitespace(it) || it == '.' }
+                        append("$adjustText...")
+                        withStyle(style = showMoreStyle) { append(showMoreText) }
+                    }
+                } else {
+                    append(text)
+                }
+            },
+            modifier = textModifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            maxLines = if (isExpanded) Int.MAX_VALUE else collapsedMaxLine,
+            onTextLayout = { textLayoutResult ->
+                if (!isExpanded && textLayoutResult.hasVisualOverflow) {
+                    clickable = true
+                    lastCharIndex = textLayoutResult.getLineEnd(collapsedMaxLine - 1)
+                }
+            },
+            style = robotoRegular,
+            fontSize = 13.ssp
+        )
+    }
 }
 
 @Composable
@@ -463,7 +491,7 @@ fun WaveItems() {
         Spacer(Modifier.height(8.sdp))
 
         CvTextView(
-            txt = "To be won during this airdrop",
+            txt = stringResource(R.string.to_be_won_during_this_airdrop),
             fontSize = 12.ssp,
             style = robotoRegular,
             textColor = subtitleTxtColor,
@@ -475,59 +503,64 @@ fun WaveItems() {
 }
 
 @Composable
-fun AirdropTimeline() {
+fun GradiantTitleText(strTitle: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        CvImageView(
+            painter = R.drawable.ic_airdrop_timline,
+            contentDes = "airdrop timeline",
+            modifier = Modifier
+                .rotate(180f)
+                .padding(horizontal = 8.sdp)
+                .align(Alignment.CenterVertically)
+        )
+
+        CvTextView(
+            txt = strTitle, modifier = Modifier
+                .graphicsLayer(alpha = 0.99f)
+                .drawWithCache {
+                    val brush = Brush.horizontalGradient(
+                        listOf(
+                            Color(0xFF8B37F7), Color(0xFFFA8662)
+                        )
+                    )
+                    onDrawWithContent {
+                        drawContent()
+                        drawRect(brush, blendMode = BlendMode.SrcAtop)
+                    }
+                }, fontSize = 21.ssp, style = sfProDisplayBold
+        )
+
+        CvImageView(
+            painter = R.drawable.ic_airdrop_timline,
+            contentDes = "airdrop timeline",
+            modifier = Modifier
+                .padding(horizontal = 12.sdp)
+                .align(Alignment.CenterVertically)
+        )
+    }
+}
+
+@Composable
+fun AirdropTimeline(strTitle: String) {
     Column {
 
         // "Airdrop Timeline" Title Text
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            CvImageView(
-                painter = R.drawable.ic_airdrop_timline,
-                contentDes = "airdrop timeline",
-                modifier = Modifier
-                    .rotate(180f)
-                    .padding(horizontal = 8.sdp)
-                    .align(Alignment.CenterVertically)
-            )
-
-            CvTextView(
-                txt = stringResource(R.string.airdrop_timeline),
-                modifier = Modifier
-                    .graphicsLayer(alpha = 0.99f)
-                    .drawWithCache {
-                        val brush = Brush.horizontalGradient(
-                            listOf(
-                                Color(0xFF8B37F7), Color(0xFFFA8662)
-                            )
-                        )
-                        onDrawWithContent {
-                            drawContent()
-                            drawRect(brush, blendMode = BlendMode.SrcAtop)
-                        }
-                    },
-                fontSize = 21.ssp,
-                style = sfProDisplayBold
-            )
-
-            CvImageView(
-                painter = R.drawable.ic_airdrop_timline,
-                contentDes = "airdrop timeline",
-                modifier = Modifier
-                    .padding(horizontal = 12.sdp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
+        GradiantTitleText(strTitle)
 
         Spacer(Modifier.height(16.sdp))
 
         //Calender View's
         Row(
-            modifier = Modifier.padding(start = 14.sdp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(enabled = true, state = ScrollState(0))
         ) {
             CalendarCard("09", "Apr, 24", "Airdrop and tasks launch", bgCalenderDeactiveColor)
+            CalendarCard("09", "Apr, 24", "Airdrop and tasks launch", bgCalenderActiveColor)
             CalendarCard("09", "Apr, 24", "Airdrop and tasks launch", bgCalenderActiveColor)
         }
     }
@@ -544,9 +577,7 @@ fun CalendarCard(day: String, monthAndYear: String, descText: String, bgColor: C
             .width(120.sdp)
             .padding(vertical = 18.sdp)
             .background(bgColor, shape = RoundedCornerShape(cornerRadius)),
-    )
-    {
-
+    ) {
         Row {
             CvTextView(
                 txt = day,
@@ -604,3 +635,661 @@ fun CalendarCard(day: String, monthAndYear: String, descText: String, bgColor: C
         CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
     }
 }
+
+@Composable
+fun EarnMoreXifiPointsHeader() {
+    Row(
+        modifier = Modifier.paint(painter = painterResource(R.drawable.horizantle_gradeant)),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CvImageView(
+            painter = R.drawable.ic_double_down_arrow,
+            contentDes = stringResource(R.string.down_arrows),
+            modifier = Modifier.padding(start = 20.sdp)
+        )
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CvTextView(
+                txt = stringResource(R.string.do_this_tasks),
+                style = sfProDisplayRegular,
+                fontSize = 14.ssp,
+                textAlign = TextAlign.Center,
+                textColor = headerTxtColor
+            )
+
+            CvTextView(
+                txt = stringResource(R.string.and_earn_more_ixfi_points),
+                style = sfProDisplayBold,
+                textColor = headerTxtColor,
+                fontSize = 20.ssp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 6.sdp)
+            )
+        }
+
+        CvImageView(
+            painter = R.drawable.ic_double_down_arrow,
+            contentDes = stringResource(R.string.down_arrows),
+            modifier = Modifier.padding(end = 20.sdp)
+        )
+    }
+}
+
+@Composable
+fun EarmMorePointsTask() {
+
+    val taskList = listOf(
+        Pair(R.drawable.ic_kyc, stringResource(R.string.kyc_task_image)),
+        Pair(R.drawable.ic_discord, stringResource(R.string.discord_task_image)),
+        Pair(R.drawable.ic_bober, stringResource(R.string.bober_task_image)),
+        Pair(R.drawable.ic_xportal, stringResource(R.string.xportal_task_image))
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        for (rowIcons in taskList.chunked(2)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(2.sdp)
+            ) {
+                rowIcons.forEach { (painter, label) ->
+                    CvImageView(
+                        painter = painter, label, modifier = Modifier.scale(0.96f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/*@Composable
+fun CustomTabBar() {
+    val tabs = listOf("Airdrop Tickets", "Contest Rules", "FAQ’s")
+    var selectedTab by remember { mutableStateOf(0) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+            .background(unselectedTextColor),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        tabs.forEachIndexed { index, title ->
+            val interactionSource = remember { MutableInteractionSource() }
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .height(40.dp)
+                    .padding(horizontal = 8.dp)
+                    .background(
+                        color = if (selectedTab == index) purpleBgColor else Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable(
+                        interactionSource = interactionSource, indication = null
+                    ) {
+                        selectedTab = index
+                    }
+                    .padding(horizontal = 16.dp)) {
+                CvTextView(
+                    txt = title,
+                    textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
+                    fontSize = 14.ssp,
+                    textAlign = TextAlign.Center,
+                    style = if (selectedTab == index) productSansMedium else productSansRegular
+                )
+            }
+        }
+    }
+}*/
+
+@Composable
+fun CustomTabBar() {
+    val tabs = listOf("Airdrop Tickets", "Contest Rules", "FAQ’s")
+    var selectedTab by remember { mutableStateOf(0) }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp)
+                .background(unselectedTextColor),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            tabs.forEachIndexed { index, title ->
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .padding(horizontal = 8.dp)
+                        .background(
+                            color = if (selectedTab == index) purpleBgColor else Color.Transparent,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            selectedTab = index
+                        }
+                        .padding(horizontal = 16.dp)
+                ) {
+                    CvTextView(
+                        txt = title,
+                        textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
+                        fontSize = 14.ssp,
+                        textAlign = TextAlign.Center,
+                        style = if (selectedTab == index) productSansMedium else productSansRegular
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(26.sdp))
+
+        when (selectedTab) {
+            0 -> AirdropContent()
+            1 -> ContestRulesPointWithBullet()
+            2 -> ExpandableFaqList()
+        }
+    }
+}
+
+@Composable
+fun ContestRulesPointWithBullet() {
+
+    val contestRulesPoint = listOf(
+        Pair(
+            stringResource(R.string.create_an_ixfi_account),
+            stringResource(R.string.create_an_ixfi_account_desc)
+        ),
+        Pair(
+            stringResource(R.string.download_blockgames_app),
+            stringResource(R.string.download_blockgames_app_desc)
+        ),
+        Pair(
+            stringResource(R.string.earn_and_use_ixfi_points),
+            stringResource(R.string.earn_and_use_ixfi_points_desc)
+        ),
+        Pair(
+            stringResource(R.string.collect_a_bober_nft),
+            stringResource(R.string.collect_a_bober_nft_desc)
+        )
+    )
+
+
+//    Spacer(Modifier.height(34.sdp))
+
+    Column(modifier = Modifier.padding(start = 20.sdp, end = 12.sdp)) {
+        contestRulesPoint.forEachIndexed { index, (title, description) ->
+
+            TextWithBullet(title, index)
+
+            CvTextView(
+                txt = description,
+                style = robotoRegular,
+                textColor = subtitleTxtColor,
+                fontSize = 14.ssp,
+                letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
+                modifier = Modifier.padding(top = 14.sdp, start = 22.sdp, end = 10.sdp)
+            )
+        }
+    }
+}
+
+@Composable
+fun TextWithBullet(txt: String, index: Int) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = if (index >= 1) 16.sdp else 0.sdp)
+    ) {
+        Canvas(
+            modifier = Modifier.size(8.dp)
+        ) {
+            drawCircle(bulletPointColor)
+        }
+
+        CvTextView(
+            txt = txt,
+            style = robotoMedium,
+            textColor = headerTxtColor,
+            fontSize = 16.ssp,
+            modifier = Modifier.padding(start = 14.sdp)
+        )
+    }
+
+}
+
+@Composable
+fun ExpandableFaqList() {
+
+    val faqPoints = listOf(
+        Pair(
+            stringResource(R.string.where_can_you_buy_bober),
+            stringResource(R.string.where_can_you_buy_bober_desc)
+        ),
+        Pair(
+            stringResource(R.string.what_is_the_daily_trading_volume_of_bober),
+            stringResource(R.string.where_can_you_buy_bober_desc)
+        ),
+        Pair(
+            stringResource(R.string.what_is_the_all_time_low_for_bober),
+            stringResource(R.string.where_can_you_buy_bober_desc)
+        ),
+        Pair(
+            stringResource(R.string.what_is_the_fully_diluted_valuation_of_bober),
+            stringResource(R.string.where_can_you_buy_bober_desc)
+        ),
+    )
+
+    var expandedIndex by remember { mutableIntStateOf(-1) }
+
+
+//    Spacer(Modifier.height(20.sdp))
+    Row {
+        Column(modifier = Modifier.padding(start = 16.sdp, end = 16.sdp)) {
+            faqPoints.forEachIndexed { index, faq ->
+                ExpandableTextView(title = faq.first,
+                    description = faq.second,
+                    isExpanded = expandedIndex == index,
+                    onTitleClick = {
+                        expandedIndex = if (expandedIndex == index) -1 else index
+                    })
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpandableTextView(
+    title: String, description: String, isExpanded: Boolean, onTitleClick: () -> Unit
+) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxWidth()) {
+        CvImageView(
+            painter = R.drawable.ic_trangle,
+            contentDes = stringResource(R.string.bullet_point),
+            modifier = Modifier
+                .size(14.sdp)
+                .padding(top = 2.sdp)
+                .rotate(if (isExpanded) 360f else 270f)
+        )
+        Column(modifier = Modifier.padding(start = 12.sdp, bottom = 28.sdp)) {
+            // Title
+            CvTextView(
+                txt = title,
+                fontSize = 15.sp,
+                textColor = headerTxtColor,
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null, // Disable the ripple effect
+                        onClick = onTitleClick // Trigger click event for title
+                    )
+                    .padding(bottom = 4.dp),
+                style = robotoMedium
+            )
+
+            // Description
+            AnimatedVisibility(visible = isExpanded) {
+                Text(
+                    text = description,
+                    fontSize = 13.sp,
+                    color = subtitleTxtColor,
+                    style = robotoRegular,
+                    modifier = Modifier.padding(top = 12.sdp),
+                    letterSpacing = TextUnit(0.2f, TextUnitType.Sp)
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun MoreAboutBober() {
+
+    //Title text
+    GradiantTitleText(stringResource(R.string.more_about_bober))
+
+    Spacer(Modifier.height(22.sdp))
+
+    CvImageView(
+        painter = R.drawable.more_about_bober,
+        contentDes = stringResource(R.string.more_about_bober_banner)
+    )
+}
+
+@Composable
+fun LegalDisclaimer() {
+    Column(modifier = Modifier.padding(start = 20.sdp, end = 16.sdp)) {
+
+        CvTextView(
+            txt = "Legal Disclaimer",
+            style = sfProDisplaySemiBold,
+            fontSize = 17.ssp,
+            textColor = headerTxtColor
+        )
+
+        CvTextView(
+            txt = stringResource(R.string.legal_disclaimer),
+            style = robotoRegular,
+            fontSize = 13.ssp,
+            textColor = subtitleTxtColor,
+            modifier = Modifier.padding(vertical = 26.sdp)
+        )
+    }
+}
+
+@Composable
+fun NotifyViewWithTimer() {
+    val startTimeInMillis = (7L * 24 * 60 * 60 + 15L * 60 * 60 + 12L * 60 + 59L) * 1000
+    var timeLeft by remember { mutableStateOf(startTimeInMillis) }
+
+    LaunchedEffect(Unit) {
+        object : CountDownTimer(startTimeInMillis, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timeLeft = millisUntilFinished
+            }
+
+            override fun onFinish() {
+                timeLeft = 0
+            }
+        }.start()
+    }
+
+    val days = (timeLeft / (1000 * 60 * 60 * 24)).toInt()
+    val hours = ((timeLeft / (1000 * 60 * 60)) % 24).toInt()
+    val minutes = ((timeLeft / (1000 * 60)) % 60).toInt()
+    val seconds = ((timeLeft / 1000) % 60).toInt()
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(62.sdp)
+            .background(Color(0xFFFFFBF2), RoundedCornerShape(8.sdp)),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 26.sdp, end = 26.sdp, bottom = 18.sdp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CvTextView(
+                    txt = stringResource(R.string.available_in),
+                    style = robotoRegular,
+                    fontSize = 14.ssp,
+                    textColor = headerTxtColor
+                )
+                CvTextView(txt = "${days}D : ${hours}H : ${minutes}M : ${seconds}S",
+                    style = productSansRegular,
+                    fontSize = 14.ssp,
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            val brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color(0xFF8B37F7), Color(0xFFFA8662)
+                                )
+                            )
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(brush, blendMode = BlendMode.SrcAtop)
+                            }
+                        })
+            }
+
+            // Notify Button
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CvTextView(
+                    txt = "\uD83D\uDC49 ", fontSize = 18.sp, textAlign = TextAlign.Center
+                )
+                CvTextView(
+                    txt = stringResource(R.string.notify_me),
+                    style = productSansMedium,
+                    textColor = purperTextColor,
+                    fontSize = 15.ssp
+                )
+                CvImageView(
+                    painter = R.drawable.ic_back,
+                    contentDes = stringResource(R.string.notify_arrow),
+                    modifier = Modifier
+                        .rotate(180f)
+                        .padding(start = 8.sdp, end = 8.sdp, bottom = 3.sdp)
+                        .size(16.sdp),
+                    colorFilter = ColorFilter.tint(purperTextColor)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AirdropContent() {
+//    Spacer(Modifier.height(20.sdp))
+    Column(
+        modifier = Modifier
+            .paint(painter = painterResource(R.drawable.bg_texture))
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 16.sdp)) {
+            CvTextView(
+                txt = stringResource(R.string.beavers_not_only_build_dams_but_also_secure_more_airdrop_tickets),
+                textColor = headerTxtColor,
+                style = productSansMedium,
+                fontSize = 20.ssp,
+                letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
+                modifier = Modifier.padding(
+                    start = 34.sdp, end = 100.sdp, top = 20.sdp
+                )
+            )
+
+            Spacer(Modifier.height(20.sdp))
+
+            HorizontalDotedLine()
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.sdp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                //Avalible in
+                Column(modifier = Modifier.weight(0.8f)) {
+                    CvTextView(
+                        txt = stringResource(R.string.available_in),
+                        textColor = headerTxtColor,
+                        style = productSansRegular,
+                        fontSize = 11.ssp
+                    )
+
+                    Spacer(Modifier.height(6.sdp))
+
+                    CvTextView(
+                        txt = stringResource(R.string._7d_11h),
+                        textColor = headerTxtColor,
+                        style = productSansBold,
+                        fontSize = 18.ssp
+                    )
+                }
+
+                CvImageView(
+                    painter = R.drawable.vertical_doted_line,
+                    contentDes = stringResource(R.string.vertical_doted_line),
+                    modifier = Modifier.weight(0.2f)
+                )
+
+                //Get using
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(0.8f)
+                        .padding(start = 12.sdp)
+                ) {
+                    CvTextView(
+                        txt = stringResource(R.string.get_using),
+                        textColor = headerTxtColor,
+                        style = productSansRegular,
+                        fontSize = 11.ssp
+                    )
+
+                    CvTextView(
+                        txt = stringResource(R.string._20),
+                        textColor = headerTxtColor,
+                        style = productSansBold,
+                        fontSize = 18.ssp,
+                        modifier = Modifier.padding(start = 14.sdp, end = 10.sdp)
+                    )
+
+                    CvImageView(
+                        painter = R.drawable.ic_point,
+                        contentDes = stringResource(R.string.point_icon),
+                    )
+                }
+            }
+
+            HorizontalDotedLine()
+
+            CvImageView(
+                painter = R.drawable.airdrop_bear,
+                contentDes = stringResource(R.string.more_about_bober_banner)
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 18.sdp, end = 18.sdp, start = 18.sdp)
+            ) {
+                CvTextView(
+                    txt = "\uD83D\uDC49 ", fontSize = 18.sp, textAlign = TextAlign.Center
+                )
+                CvTextView(
+                    txt = stringResource(R.string.notify_me),
+                    style = productSansBold,
+                    textColor = txtPinkColor,
+                    fontSize = 18.ssp,
+                    modifier = Modifier.padding(end = 12.sdp)
+                )
+                CvImageView(
+                    painter = R.drawable.ic_notify_icon,
+                    contentDes = stringResource(R.string.more_about_bober_banner),
+                    modifier = Modifier.padding(top = 6.sdp)
+                )
+
+            }
+
+            CvImageView(
+                painter = R.drawable.ic_curved_line,
+                contentDes = stringResource(R.string.curved_line),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
+    }
+}
+
+@Composable
+fun HorizontalDotedLine() {
+    Box(
+        Modifier
+            .height(1.dp)
+            .fillMaxWidth()
+            .background(lineColor, shape = DottedShape(step = 10.dp))
+    )
+}
+
+private data class DottedShape(
+    val step: Dp
+) : Shape {
+    override fun createOutline(
+        size: Size, layoutDirection: LayoutDirection, density: Density
+    ) = Outline.Generic(Path().apply {
+        val stepPx = with(density) { step.toPx() }
+        val stepsCount = (size.width / stepPx).roundToInt()
+        val actualStep = size.width / stepsCount
+        val dotSize = Size(width = actualStep / 2, height = size.height)
+        for (i in 0 until stepsCount) {
+            addRect(
+                Rect(
+                    offset = Offset(x = i * actualStep, y = 0f), size = dotSize
+                )
+            )
+        }
+        close()
+    })
+}
+
+/*@Composable
+fun AirdropContent(
+    modifier: Modifier = Modifier,
+    headerColor: Color = Color.LightGray,
+    perforationColor: Color = Color.White,
+    circleRadius: Dp = 8.dp
+) {
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(headerColor)
+        )
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .rotate(180f)
+        ) {
+            val circleSpacing = 72f // Space between circles
+            val circleY = size.height // Bottom of the header
+            var circleX = circleRadius.toPx()
+
+            while (circleX < size.width) {
+                drawCircle(
+                    color = perforationColor,
+                    radius = circleRadius.toPx(),
+                    center = Offset(x = circleX, y = circleY)
+                )
+                circleX = circleX.plus(circleSpacing)
+            }
+        }
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            val circleSpacing = 72f // Space between circles
+            val circleY = size.height // Bottom of the header
+            var circleX = circleRadius.toPx()
+
+            while (circleX < size.width) {
+                drawCircle(
+                    color = perforationColor,
+                    radius = circleRadius.toPx(),
+                    center = Offset(x = circleX, y = circleY)
+                )
+                circleX = circleX.plus(circleSpacing)
+            }
+        }
+    }
+}*/
