@@ -23,13 +23,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.paint
@@ -53,9 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
@@ -117,7 +111,7 @@ fun BearContent() {
             painter = R.drawable.ic_profile_pic,
             contentDes = "logo",
             modifier = Modifier
-                .size(100.sdp)
+                .size(80.sdp)
                 .padding(top = 2.sdp)
         )
         Column(
@@ -152,7 +146,7 @@ fun DotSeparatedList(items: List<String>) {
         items.forEachIndexed { index, item ->
             CvTextView(
                 txt = item,
-                fontSize = 14.ssp,
+                fontSize = 12.ssp,
                 textColor = subtitleTxtColor,
                 style = robotoRegular,
                 fontWeight = FontWeight.SemiBold
@@ -424,7 +418,7 @@ fun WavyCanvasView() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(210.dp)
+            .height(200.dp)
             .background(Color.White)
     ) {
         Canvas(
@@ -468,19 +462,19 @@ fun WavyCanvasView() {
 fun WaveItems() {
     Column(
         modifier = Modifier
-            .width(135.sdp)
-            .height(160.sdp)
+            .width(130.sdp)
+            .height(155.sdp)
             .padding(8.sdp)
             .background(
                 Color.White, shape = RoundedCornerShape(12.sdp)
             ), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(12.sdp))
+        Spacer(Modifier.height(8.sdp))
 
         CvImageView(
-            painter = R.drawable.ic_nft, contentDes = "ntf icon"
+            painter = R.drawable.ic_nft, contentDes = stringResource(R.string.ntf_icon)
         )
-        Spacer(Modifier.height(14.sdp))
+        Spacer(Modifier.height(12.sdp))
 
         CvTextView(
             txt = stringResource(R.string._350_nft_s),
@@ -547,21 +541,139 @@ fun GradiantTitleText(strTitle: String) {
 @Composable
 fun AirdropTimeline(strTitle: String) {
     Column {
-
         // "Airdrop Timeline" Title Text
         GradiantTitleText(strTitle)
 
-        Spacer(Modifier.height(16.sdp))
+        Spacer(Modifier.height(22.sdp))
 
         //Calender View's
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(enabled = true, state = ScrollState(0))
+                .horizontalScroll(state = ScrollState(0))
         ) {
-            CalendarCard("09", "Apr, 24", "Airdrop and tasks launch", bgCalenderDeactiveColor)
-            CalendarCard("09", "Apr, 24", "Airdrop and tasks launch", bgCalenderActiveColor)
-            CalendarCard("09", "Apr, 24", "Airdrop and tasks launch", bgCalenderActiveColor)
+            NewCalenderView(
+                "09",
+                "Apr, 24",
+                "Airdrop and tasks launch",
+                bgCalenderDeactiveColor
+            )
+
+            NewCalenderView(
+                "15",
+                "Apr, 24",
+                "Start of ticket Sale",
+                bgCalenderActiveColor
+            )
+
+            NewCalenderView(
+                "21",
+                "Apr, 24",
+                "Ticket Sale Closing",
+                bgCalenderDeactiveColor
+            )
+
+            NewCalenderView(
+                "15",
+                "Apr, 24",
+                "Start of ticket Sale",
+                bgCalenderActiveColor
+            )
+        }
+    }
+}
+
+@Composable
+fun NewCalenderView(
+    day: String, monthAndYear: String, descText: String, bgColor: Color
+) {
+
+    val roundedCornerRadius = 22.sdp
+
+    Box(
+        modifier = Modifier
+            .height(115.sdp)
+            .width(135.sdp)
+            .padding(start = 14.sdp)
+            .background(bgCalenderDeactiveColor, shape = RoundedCornerShape(roundedCornerRadius))
+    )
+    {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 3.sdp)
+                .background(
+                    bgCalenderDeactiveColor,
+                    shape = RoundedCornerShape(roundedCornerRadius)
+                )
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            bgColor,
+                            shape = RoundedCornerShape(
+                                topStart = roundedCornerRadius,
+                                topEnd = roundedCornerRadius
+                            )
+                        )
+                ) {
+                    CvTextView(
+                        txt = day,
+                        style = productSansBold,
+                        textColor = Color.White,
+                        fontSize = 32.ssp,
+                        modifier = Modifier.padding(start = 20.sdp, top = 20.sdp)
+                    )
+
+                    CvTextView(
+                        txt = monthAndYear,
+                        style = robotoRegular,
+                        textColor = Color.White,
+                        fontSize = 12.ssp,
+                        modifier = Modifier
+                            .padding(start = 5.sdp, bottom = 6.sdp)
+                            .align(Alignment.Bottom),
+                        textAlign = TextAlign.Start
+                    )
+                }
+
+                //Desc Text with white bg
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 1.sdp, bottom = 3.sdp)
+                        .background(
+                            Color.White,
+                            shape = RoundedCornerShape(
+                                bottomEnd = roundedCornerRadius,
+                                bottomStart = roundedCornerRadius
+                            )
+                        )
+                ) {
+                    CvTextView(
+                        txt = descText,
+                        textColor = headerTxtColor,
+                        fontSize = 13.ssp,
+                        textAlign = TextAlign.Center,
+                        style = robotoMedium,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 16.sdp)
+                    )
+                }
+            }
+        }
+
+        //1st Hook
+        Box(Modifier.offset(x = ((-107).sdp), y = ((-9).sdp))) {
+            CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
+        }
+
+        //2nd Hook
+        Box(Modifier.offset(x = ((-59).sdp), y = ((-9).sdp))) {
+            CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
         }
     }
 }
@@ -749,7 +861,7 @@ fun CustomTabBar() {
 @Composable
 fun CustomTabBar() {
     val tabs = listOf("Airdrop Tickets", "Contest Rules", "FAQ’s")
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -757,7 +869,7 @@ fun CustomTabBar() {
                 .fillMaxWidth()
                 .height(70.dp)
                 .background(unselectedTextColor),
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             tabs.forEachIndexed { index, title ->
@@ -1134,7 +1246,7 @@ fun AirdropContent() {
                 CvImageView(
                     painter = R.drawable.vertical_doted_line,
                     contentDes = stringResource(R.string.vertical_doted_line),
-                    modifier = Modifier.weight(0.2f)
+                    modifier = Modifier.weight(0.2f).size(60.sdp)
                 )
 
                 //Get using

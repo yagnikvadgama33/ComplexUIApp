@@ -45,7 +45,6 @@ import com.example.complexuiapp.components.ExpandableText
 import com.example.complexuiapp.components.LegalDisclaimer
 import com.example.complexuiapp.components.MiddleGradientBackground
 import com.example.complexuiapp.components.MoreAboutBober
-import com.example.complexuiapp.components.AirdropContent
 import com.example.complexuiapp.components.SocialLinksBottomSheet
 import com.example.complexuiapp.components.SocialMediaIcons
 import com.example.complexuiapp.components.WaveItems
@@ -164,7 +163,7 @@ fun MainAScreenUI(
                         .padding(horizontal = 8.sdp)
                         .background(
                             Color.White,
-                            shape = RoundedCornerShape(topStart = 28.sdp, topEnd = 28.sdp)
+                            shape = RoundedCornerShape(topStart = 24.sdp, topEnd = 24.sdp)
                         ),
                 ) {
                     Column(modifier = Modifier.padding(horizontal = 14.sdp)) {
@@ -210,7 +209,7 @@ fun MainAScreenUI(
                 //Airdrop Timeline
                 AirdropTimeline(stringResource(R.string.airdrop_timeline))
 
-                Spacer(Modifier.height(12.sdp))
+                Spacer(Modifier.height(28.sdp))
 
                 //Do this task and Earn More Xifi Points
                 EarnMoreXifiPointsHeader()
@@ -219,7 +218,7 @@ fun MainAScreenUI(
 
                 EarmMorePointsTask()
 
-                Spacer(Modifier.height(12.sdp))
+                Spacer(Modifier.height(22.sdp))
 
                 //Tab Bar
                 CustomTabBar()

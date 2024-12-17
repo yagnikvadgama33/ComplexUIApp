@@ -48,4 +48,5 @@
     <string name="point_icon">point icon</string>
     <string name="curved_line">curved line</string>
     <string name="vertical_doted_line">vertical doted line</string>
+    <string name="ntf_icon">ntf icon</string>
 </resources>
