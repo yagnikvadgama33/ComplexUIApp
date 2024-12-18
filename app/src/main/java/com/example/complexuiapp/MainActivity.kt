@@ -70,37 +70,42 @@ class MainActivity : ComponentActivity() {
             val scrollState = rememberScrollState()
 
             ComplexUIAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.Transparent,
-                        ),
-                        title = {},
-                        navigationIcon = {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                CvIconButton(
-                                    R.drawable.ic_back,
+                Scaffold(modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color.Transparent,
+                            ),
+                            title = {},
+                            navigationIcon = {
+                                Row(
                                     modifier = Modifier
-                                        .padding(start = 8.sdp),
-                                    iconDescription = stringResource(R.string.back)
-                                ) { }
-                                CircularImageWithBackground(
-                                    R.drawable.ic_airdrop,
-                                    contentDescription = stringResource(R.string.airdrop),
-                                    modifier = Modifier
-                                        .padding(end = 26.sdp),
-                                    bgColor = Color.White,
-                                    imgSize = 46.sdp
-                                )
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    CvIconButton(
+                                        R.drawable.ic_back,
+                                        modifier = Modifier
+                                            .padding(start = 8.sdp),
+                                        iconDescription = stringResource(R.string.back)
+                                    ) { }
+                                    CircularImageWithBackground(
+                                        R.drawable.ic_airdrop,
+                                        contentDescription = stringResource(R.string.airdrop),
+                                        modifier = Modifier
+                                            .padding(end = 26.sdp),
+                                        bgColor = Color.White,
+                                        imgSize = 46.sdp
+                                    )
+                                }
                             }
-                        }
-                    )
-                }) { innerPadding ->
+                        )
+                    },
+                    bottomBar = {
+                        //Bottom Notify View
+                        NotifyViewWithTimer()
+                    }) { innerPadding ->
                     MainAScreenUI(scrollState, innerPadding)
                 }
             }
@@ -151,7 +156,6 @@ fun MainAScreenUI(
         }
 
         Box {
-
             //Bg Middle Fade Gradent
             MiddleGradientBackground()
 
@@ -191,17 +195,9 @@ fun MainAScreenUI(
                 }
 
                 //Wave and below content box
-                Box {
+                Box(contentAlignment = Alignment.Center) {
                     WavyCanvasView()
-
-                    Row(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        WaveItems()
-                        WaveItems()
-                        WaveItems()
-                    }
+                    WaveItems()
                 }
 
                 Spacer(Modifier.height(20.sdp))
@@ -238,8 +234,8 @@ fun MainAScreenUI(
             }
         }
 
-        //Bottom Notify View
-        NotifyViewWithTimer()
+//        //Bottom Notify View
+//        NotifyViewWithTimer()
     }
 
     //Check for icon click

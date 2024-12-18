@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -71,6 +72,8 @@ import androidx.compose.ui.unit.sp
 import com.example.complexuiapp.CvImageView
 import com.example.complexuiapp.CvTextView
 import com.example.complexuiapp.R
+import com.example.complexuiapp.helper.CalenderView
+import com.example.complexuiapp.helper.NtfItems
 import com.example.complexuiapp.helper.sdp
 import com.example.complexuiapp.helper.ssp
 import com.example.complexuiapp.ui.theme.bgCalenderActiveColor
@@ -79,6 +82,8 @@ import com.example.complexuiapp.ui.theme.borderColor
 import com.example.complexuiapp.ui.theme.bulletPointColor
 import com.example.complexuiapp.ui.theme.headerTxtColor
 import com.example.complexuiapp.ui.theme.lineColor
+import com.example.complexuiapp.ui.theme.liteGreyColor
+import com.example.complexuiapp.ui.theme.moreIconColor
 import com.example.complexuiapp.ui.theme.productSansBold
 import com.example.complexuiapp.ui.theme.productSansMedium
 import com.example.complexuiapp.ui.theme.productSansRegular
@@ -174,6 +179,14 @@ fun SocialMediaIcons(onClick: () -> Unit) {
         Pair(R.drawable.ic_internet, "Facebook"),
         Pair(R.drawable.ic_x, "Twitter"),
         Pair(R.drawable.ic_telegram, "Telegram"),
+        Pair(R.drawable.ic_internet, "Facebook"),
+        Pair(R.drawable.ic_x, "Twitter"),
+        Pair(R.drawable.ic_telegram, "Telegram"),
+        Pair(R.drawable.ic_mail, "Coingeko"),
+        Pair(R.drawable.ic_internet, "Facebook"),
+        Pair(R.drawable.ic_x, "Twitter"),
+        Pair(R.drawable.ic_telegram, "Telegram"),
+        Pair(R.drawable.ic_mail, "Coingeko"),
     )
 
     Box(
@@ -184,40 +197,65 @@ fun SocialMediaIcons(onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 14.sdp, bottom = 14.sdp, start = 20.sdp, end = 6.sdp)
+                .padding(top = 8.sdp, bottom = 8.sdp, start = 20.sdp, end = 6.sdp)
                 .background(Color.White, shape = RoundedCornerShape(14.sdp)),
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.6f)
-                    .padding(),
-                horizontalArrangement = Arrangement.spacedBy(space = 22.sdp)
+                    .weight(0.8f),
+                horizontalArrangement = if (icons.size <= 4) Arrangement.spacedBy(
+                    26.sdp,
+                    Alignment.CenterHorizontally
+                ) else Arrangement.spacedBy(18.sdp, Alignment.Start)
             ) {
-                CvImageView(
-                    painter = R.drawable.ic_internet, "internet", modifier = Modifier.size(24.sdp)
-                )
-                CvImageView(
-                    painter = R.drawable.ic_x, "x", modifier = Modifier.size(24.sdp)
-                )
-                CvImageView(
-                    painter = R.drawable.ic_telegram, "telegram", modifier = Modifier.size(24.sdp)
-                )
-                CvImageView(
-                    painter = R.drawable.ic_mail, "mail", modifier = Modifier.size(24.sdp)
-                )
+
+                icons.forEachIndexed { index, (icon, label) ->
+                    if (index < 4) {
+                        CvImageView(
+                            painter = icon, label, modifier = Modifier.size(24.sdp)
+                        )
+                    }
+                }
             }
+            if (icons.size > 4) {
+                MoreSocialIconsView(icons.size - 4, Modifier.weight(0.17f))
+            }
+        }
+    }
+}
+
+@Composable
+fun MoreSocialIconsView(iconNum: Int, modifier: Modifier) {
+    Box(
+        modifier = modifier
+            .background(liteGreyColor, RoundedCornerShape(8.sdp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 6.sdp, horizontal = 3.sdp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CvTextView(
+                txt = if (iconNum > 9) stringResource(R.string._9) else stringResource(
+                    R.string.icon_cont,
+                    iconNum
+                ),
+                style = productSansMedium,
+                fontSize = 14.ssp,
+                textColor = moreIconColor
+            )
             CvImageView(
-                painter = R.drawable.ic_3_plus,
-                "internet",
-                modifier = Modifier
-                    .size(24.sdp)
-                    .weight(0.13f)
-                    .scale(1.3f)
-                    .clickable(onClick = onClick)
+                painter = R.drawable.ic_more_icons,
+                contentDes = stringResource(R.string.more_icons),
+                modifier = Modifier.padding(start = 6.sdp)
             )
         }
+
     }
 }
 
@@ -460,7 +498,68 @@ fun WavyCanvasView() {
 
 @Composable
 fun WaveItems() {
-    Column(
+
+    val nftItems = listOf(
+        NtfItems(
+            R.drawable.ic_nft,
+            stringResource(R.string._350_nft_s),
+            stringResource(R.string.to_be_won_during_this_airdrop)
+        ),
+        NtfItems(
+            R.drawable.ic_nft,
+            stringResource(R.string._350_nft_s),
+            stringResource(R.string.to_be_won_during_this_airdrop)
+        ),
+        NtfItems(
+            R.drawable.ic_nft,
+            stringResource(R.string._350_nft_s),
+            stringResource(R.string.to_be_won_during_this_airdrop)
+        ),
+    )
+
+    Row(
+        modifier = Modifier,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        nftItems.forEach {
+            Column(
+                modifier = Modifier
+                    .width(130.sdp)
+                    .height(155.sdp)
+                    .padding(8.sdp)
+                    .background(
+                        Color.White, shape = RoundedCornerShape(12.sdp)
+                    ), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(8.sdp))
+
+                CvImageView(
+                    painter = it.icon, contentDes = stringResource(R.string.ntf_icon)
+                )
+                Spacer(Modifier.height(12.sdp))
+
+                CvTextView(
+                    txt = it.title,
+                    fontSize = 16.ssp,
+                    style = sfProDisplayRegular,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(8.sdp))
+
+                CvTextView(
+                    txt = it.description,
+                    fontSize = 12.ssp,
+                    style = robotoRegular,
+                    textColor = subtitleTxtColor,
+                    modifier = Modifier.padding(horizontal = 3.sdp),
+                    textAlign = TextAlign.Center,
+                    letterSpacing = TextUnit(0.2f, TextUnitType.Sp)
+                )
+            }
+        }
+    }
+
+    /*Column(
         modifier = Modifier
             .width(130.sdp)
             .height(155.sdp)
@@ -493,7 +592,7 @@ fun WaveItems() {
             textAlign = TextAlign.Center,
             letterSpacing = TextUnit(0.2f, TextUnitType.Sp)
         )
-    }
+    }*/
 }
 
 @Composable
@@ -540,10 +639,41 @@ fun GradiantTitleText(strTitle: String) {
 
 @Composable
 fun AirdropTimeline(strTitle: String) {
+
+    val calenderItemList = listOf(
+        CalenderView(
+            day = 9,
+            monthAndYear = stringResource(R.string.apr_24),
+            remark = stringResource(R.string.airdrop_and_tasks_launch),
+            bgColor = bgCalenderDeactiveColor,
+            isSingleDigit = true
+        ),
+        CalenderView(
+            15,
+            stringResource(R.string.apr_24),
+            stringResource(R.string.start_of_ticket_sale),
+            bgCalenderActiveColor,
+            isSingleDigit = false
+        ),
+        CalenderView(
+            21,
+            stringResource(R.string.apr_24),
+            stringResource(R.string.ticket_sale_closing),
+            bgCalenderDeactiveColor,
+            isSingleDigit = false
+        ),
+        CalenderView(
+            day = 9,
+            monthAndYear = stringResource(R.string.apr_24),
+            remark = stringResource(R.string.airdrop_and_tasks_launch),
+            bgColor = bgCalenderDeactiveColor,
+            isSingleDigit = true
+        )
+    )
+
     Column {
         // "Airdrop Timeline" Title Text
         GradiantTitleText(strTitle)
-
         Spacer(Modifier.height(22.sdp))
 
         //Calender View's
@@ -552,40 +682,19 @@ fun AirdropTimeline(strTitle: String) {
                 .fillMaxWidth()
                 .horizontalScroll(state = ScrollState(0))
         ) {
-            NewCalenderView(
-                "09",
-                "Apr, 24",
-                "Airdrop and tasks launch",
-                bgCalenderDeactiveColor
-            )
 
-            NewCalenderView(
-                "15",
-                "Apr, 24",
-                "Start of ticket Sale",
-                bgCalenderActiveColor
-            )
-
-            NewCalenderView(
-                "21",
-                "Apr, 24",
-                "Ticket Sale Closing",
-                bgCalenderDeactiveColor
-            )
-
-            NewCalenderView(
-                "15",
-                "Apr, 24",
-                "Start of ticket Sale",
-                bgCalenderActiveColor
-            )
+            calenderItemList.forEach {
+                NewCalenderView(
+                    it.day, it.monthAndYear, it.remark, it.bgColor, it.isSingleDigit
+                )
+            }
         }
     }
 }
 
 @Composable
 fun NewCalenderView(
-    day: String, monthAndYear: String, descText: String, bgColor: Color
+    day: Int, monthAndYear: String, descText: String, bgColor: Color, isSingleDigit: Boolean
 ) {
 
     val roundedCornerRadius = 22.sdp
@@ -596,15 +705,13 @@ fun NewCalenderView(
             .width(135.sdp)
             .padding(start = 14.sdp)
             .background(bgCalenderDeactiveColor, shape = RoundedCornerShape(roundedCornerRadius))
-    )
-    {
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 3.sdp)
                 .background(
-                    bgCalenderDeactiveColor,
-                    shape = RoundedCornerShape(roundedCornerRadius)
+                    bgCalenderDeactiveColor, shape = RoundedCornerShape(roundedCornerRadius)
                 )
         ) {
             Column {
@@ -612,15 +719,13 @@ fun NewCalenderView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            bgColor,
-                            shape = RoundedCornerShape(
-                                topStart = roundedCornerRadius,
-                                topEnd = roundedCornerRadius
+                            bgColor, shape = RoundedCornerShape(
+                                topStart = roundedCornerRadius, topEnd = roundedCornerRadius
                             )
                         )
                 ) {
                     CvTextView(
-                        txt = day,
+                        txt = if (isSingleDigit) "0$day" else day.toString(),
                         style = productSansBold,
                         textColor = Color.White,
                         fontSize = 32.ssp,
@@ -645,10 +750,8 @@ fun NewCalenderView(
                         .fillMaxSize()
                         .padding(start = 1.sdp, bottom = 3.sdp)
                         .background(
-                            Color.White,
-                            shape = RoundedCornerShape(
-                                bottomEnd = roundedCornerRadius,
-                                bottomStart = roundedCornerRadius
+                            Color.White, shape = RoundedCornerShape(
+                                bottomEnd = roundedCornerRadius, bottomStart = roundedCornerRadius
                             )
                         )
                 ) {
@@ -874,8 +977,7 @@ fun CustomTabBar() {
         ) {
             tabs.forEachIndexed { index, title ->
                 val interactionSource = remember { MutableInteractionSource() }
-                Box(
-                    contentAlignment = Alignment.Center,
+                Box(contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .height(40.dp)
                         .padding(horizontal = 8.dp)
@@ -884,13 +986,11 @@ fun CustomTabBar() {
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable(
-                            interactionSource = interactionSource,
-                            indication = null
+                            interactionSource = interactionSource, indication = null
                         ) {
                             selectedTab = index
                         }
-                        .padding(horizontal = 16.dp)
-                ) {
+                        .padding(horizontal = 16.dp)) {
                     CvTextView(
                         txt = title,
                         textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
@@ -919,16 +1019,13 @@ fun ContestRulesPointWithBullet() {
         Pair(
             stringResource(R.string.create_an_ixfi_account),
             stringResource(R.string.create_an_ixfi_account_desc)
-        ),
-        Pair(
+        ), Pair(
             stringResource(R.string.download_blockgames_app),
             stringResource(R.string.download_blockgames_app_desc)
-        ),
-        Pair(
+        ), Pair(
             stringResource(R.string.earn_and_use_ixfi_points),
             stringResource(R.string.earn_and_use_ixfi_points_desc)
-        ),
-        Pair(
+        ), Pair(
             stringResource(R.string.collect_a_bober_nft),
             stringResource(R.string.collect_a_bober_nft_desc)
         )
@@ -1081,7 +1178,11 @@ fun MoreAboutBober() {
 
 @Composable
 fun LegalDisclaimer() {
-    Column(modifier = Modifier.padding(start = 20.sdp, end = 16.sdp)) {
+    Column(
+        modifier = Modifier
+            .padding(start = 20.sdp, end = 16.sdp)
+            .navigationBarsPadding()
+    ) {
 
         CvTextView(
             txt = "Legal Disclaimer",
@@ -1246,7 +1347,9 @@ fun AirdropContent() {
                 CvImageView(
                     painter = R.drawable.vertical_doted_line,
                     contentDes = stringResource(R.string.vertical_doted_line),
-                    modifier = Modifier.weight(0.2f).size(60.sdp)
+                    modifier = Modifier
+                        .weight(0.2f)
+                        .size(60.sdp)
                 )
 
                 //Get using
@@ -1351,57 +1454,3 @@ private data class DottedShape(
     })
 }
 
-/*@Composable
-fun AirdropContent(
-    modifier: Modifier = Modifier,
-    headerColor: Color = Color.LightGray,
-    perforationColor: Color = Color.White,
-    circleRadius: Dp = 8.dp
-) {
-    Box(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(headerColor)
-        )
-
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .rotate(180f)
-        ) {
-            val circleSpacing = 72f // Space between circles
-            val circleY = size.height // Bottom of the header
-            var circleX = circleRadius.toPx()
-
-            while (circleX < size.width) {
-                drawCircle(
-                    color = perforationColor,
-                    radius = circleRadius.toPx(),
-                    center = Offset(x = circleX, y = circleY)
-                )
-                circleX = circleX.plus(circleSpacing)
-            }
-        }
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        ) {
-            val circleSpacing = 72f // Space between circles
-            val circleY = size.height // Bottom of the header
-            var circleX = circleRadius.toPx()
-
-            while (circleX < size.width) {
-                drawCircle(
-                    color = perforationColor,
-                    radius = circleRadius.toPx(),
-                    center = Offset(x = circleX, y = circleY)
-                )
-                circleX = circleX.plus(circleSpacing)
-            }
-        }
-    }
-}*/
