@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +40,7 @@ import com.example.complexuiapp.components.AirdropTimeline
 import com.example.complexuiapp.components.BearContent
 import com.example.complexuiapp.components.NotifyViewWithTimer
 import com.example.complexuiapp.components.CustomTabBar
-import com.example.complexuiapp.components.EarmMorePointsTask
+import com.example.complexuiapp.components.EarnMorePointsTask
 import com.example.complexuiapp.components.EarnMoreXifiPointsHeader
 import com.example.complexuiapp.components.ExpandableText
 import com.example.complexuiapp.components.LegalDisclaimer
@@ -123,6 +122,8 @@ fun MainAScreenUI(
     paddingValues: PaddingValues
 ) {
 
+    val cardTopCornerRadius = 14.sdp
+
     var isShowMoreSocialIconsClicked by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -167,10 +168,13 @@ fun MainAScreenUI(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.sdp)
+                        .padding(horizontal = 6.sdp)
                         .background(
                             Color.White,
-                            shape = RoundedCornerShape(topStart = 24.sdp, topEnd = 24.sdp)
+                            shape = RoundedCornerShape(
+                                topStart = cardTopCornerRadius,
+                                topEnd = cardTopCornerRadius
+                            )
                         ),
                 ) {
                     Column(modifier = Modifier.padding(horizontal = 14.sdp)) {
@@ -203,7 +207,7 @@ fun MainAScreenUI(
                     WaveItems()
                 }
 
-                Spacer(Modifier.height(19.sdp))
+                Spacer(Modifier.height(21.sdp))
 
                 //Airdrop Timeline
                 AirdropTimeline(stringResource(R.string.airdrop_timeline))
@@ -215,7 +219,7 @@ fun MainAScreenUI(
 
                 Spacer(Modifier.height(18.sdp))
 
-                EarmMorePointsTask()
+                EarnMorePointsTask()
 
                 Spacer(Modifier.height(26.sdp))
 

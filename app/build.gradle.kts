@@ -57,6 +57,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
-    implementation("androidx.compose.ui:ui-graphics:1.6.0")
-    implementation("androidx.compose.foundation:foundation:1.7.6")
+    implementation(libs.ui.graphics)
 }
