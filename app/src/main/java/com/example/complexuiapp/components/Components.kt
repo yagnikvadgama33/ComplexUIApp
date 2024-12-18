@@ -8,13 +8,15 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +26,13 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -91,7 +99,6 @@ import com.example.complexuiapp.ui.theme.productSansRegular
 import com.example.complexuiapp.ui.theme.purperTextColor
 import com.example.complexuiapp.ui.theme.purpleBgColor
 import com.example.complexuiapp.ui.theme.purpleColor
-import com.example.complexuiapp.ui.theme.robotoBold
 import com.example.complexuiapp.ui.theme.robotoMedium
 import com.example.complexuiapp.ui.theme.robotoRegular
 import com.example.complexuiapp.ui.theme.sfProDisplayBold
@@ -119,7 +126,7 @@ fun BearContent() {
             contentDes = stringResource(R.string.logo),
             modifier = Modifier
                 .size(80.sdp)
-                .padding(top = 2.sdp)
+                .padding(top = 3.sdp, start = 2.sdp)
         )
         Column(
             modifier = Modifier.padding(horizontal = 12.sdp),
@@ -177,10 +184,9 @@ fun SocialMediaIcons(onClick: () -> Unit) {
         Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
         Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
         Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
-        Pair(R.drawable.ic_mail, stringResource(R.string.mail)),
-        Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
-        Pair(R.drawable.ic_telegram, stringResource(R.string.telegram))
+        Pair(R.drawable.ic_mail, stringResource(R.string.mail))
     )
+    val maxIconAllow = 4
 
     Box(
         modifier = Modifier.border(
@@ -198,22 +204,22 @@ fun SocialMediaIcons(onClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.8f),
-                horizontalArrangement = if (icons.size <= 4) Arrangement.spacedBy(
+                horizontalArrangement = if (icons.size <= maxIconAllow) Arrangement.spacedBy(
                     32.sdp,
                     Alignment.CenterHorizontally
                 ) else Arrangement.spacedBy(18.sdp, Alignment.Start)
             ) {
 
                 icons.forEachIndexed { index, (icon, label) ->
-                    if (index < 4) {
+                    if (index < maxIconAllow) {
                         CvImageView(
                             painter = icon, label, modifier = Modifier.size(22.sdp)
                         )
                     }
                 }
             }
-            if (icons.size > 4) {
-                MoreSocialIconsView(icons.size - 4, Modifier.weight(0.17f), onClick)
+            if (icons.size > maxIconAllow) {
+                MoreSocialIconsView(icons.size - maxIconAllow, Modifier.weight(0.17f), onClick)
             }
         }
     }
@@ -262,10 +268,10 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
     var showBottomSheet by remember { mutableStateOf(true) }
 
     val icons = listOf(
-        Pair(R.drawable.ic_internet, "Facebook"),
-        Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram"),
-        Pair(R.drawable.ic_mail, "Coingeko"),
+        Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
+        Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
+        Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
+        Pair(R.drawable.ic_mail, stringResource(R.string.mail)),
         Pair(R.drawable.ic_internet, "Facebook"),
         Pair(R.drawable.ic_x, "Twitter"),
         Pair(R.drawable.ic_telegram, "Telegram"),
@@ -518,47 +524,46 @@ fun WaveItems() {
             stringResource(R.string.to_be_won_during_this_airdrop)
         ),
         NtfItems(
-            R.drawable.ic_nft,
-            stringResource(R.string._350_nft_s),
-            stringResource(R.string.to_be_won_during_this_airdrop)
+            R.drawable.ic_nft_2,
+            stringResource(R.string._40000),
+            stringResource(R.string._40000_desc)
         ),
         NtfItems(
             R.drawable.ic_nft,
-            stringResource(R.string._350_nft_s),
-            stringResource(R.string.to_be_won_during_this_airdrop)
+            stringResource(R.string._2egld),
+            stringResource(R.string._2egld_desc)
         ),
         NtfItems(
-            R.drawable.ic_nft,
+            R.drawable.ic_nft_2,
             stringResource(R.string._350_nft_s),
             stringResource(R.string.to_be_won_during_this_airdrop)
         )
     )
 
-    Row(
-        modifier = Modifier
-            .horizontalScroll(state = ScrollState(0)),
-        horizontalArrangement = Arrangement.Start
+    LazyRow(
+        horizontalArrangement = Arrangement.Start,
+        contentPadding = PaddingValues(horizontal = 14.sdp, vertical = 8.sdp)
     ) {
-        Spacer(modifier = Modifier.width(14.sdp))
-        nftItems.forEach {
+        items(nftItems) { item ->
             Column(
                 modifier = Modifier
                     .width(125.sdp)
                     .height(150.sdp)
-                    .padding(vertical = 8.sdp, horizontal = 5.sdp)
+                    .padding(horizontal = 5.sdp)
                     .background(
                         Color.White, shape = RoundedCornerShape(12.sdp)
-                    ), horizontalAlignment = Alignment.CenterHorizontally
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.height(6.sdp))
 
                 CvImageView(
-                    painter = it.icon, contentDes = stringResource(R.string.ntf_icon)
+                    painter = item.icon, contentDes = stringResource(R.string.ntf_icon)
                 )
                 Spacer(Modifier.height(8.sdp))
 
                 CvTextView(
-                    txt = it.title,
+                    txt = item.title,
                     fontSize = 16.ssp,
                     style = sfProDisplayRegular,
                     fontWeight = FontWeight.SemiBold
@@ -566,7 +571,7 @@ fun WaveItems() {
                 Spacer(Modifier.height(8.sdp))
 
                 CvTextView(
-                    txt = it.description,
+                    txt = item.description,
                     fontSize = 12.ssp,
                     style = robotoRegular,
                     textColor = subtitleTxtColor,
@@ -636,21 +641,21 @@ fun AirdropTimeline(strTitle: String) {
             15,
             stringResource(R.string.apr_24),
             stringResource(R.string.start_of_ticket_sale),
-            bgCalenderActiveColor,
+            bgColor = bgCalenderActiveColor,
             isSingleDigit = false
         ),
         CalenderView(
             21,
             stringResource(R.string.apr_24),
             stringResource(R.string.ticket_sale_closing),
-            bgCalenderDeactiveColor,
+            bgColor = bgCalenderActiveColor,
             isSingleDigit = false
         ),
         CalenderView(
             day = 9,
             monthAndYear = stringResource(R.string.apr_24),
             remark = stringResource(R.string.airdrop_and_tasks_launch),
-            bgColor = bgCalenderDeactiveColor,
+            bgColor = bgCalenderActiveColor,
             isSingleDigit = true
         )
     )
@@ -660,25 +665,33 @@ fun AirdropTimeline(strTitle: String) {
         GradiantTitleText(strTitle)
         Spacer(Modifier.height(36.sdp))
 
-        //Calender View's
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(state = ScrollState(0))
+        // Calendar View using LazyRow
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 14.sdp),
+            horizontalArrangement = Arrangement.Start
         ) {
-
-            calenderItemList.forEach {
+            items(calenderItemList) { calendarItem ->
                 NewCalenderView(
-                    it.day, it.monthAndYear, it.remark, it.bgColor, it.isSingleDigit
+                    day = calendarItem.day,
+                    monthAndYear = calendarItem.monthAndYear,
+                    remark = calendarItem.remark,
+                    bgColor = calendarItem.bgColor,
+                    isSingleDigit = calendarItem.isSingleDigit
                 )
             }
         }
     }
 }
 
+
 @Composable
 fun NewCalenderView(
-    day: Int, monthAndYear: String, descText: String, bgColor: Color, isSingleDigit: Boolean
+    day: Int,
+    monthAndYear: String,
+    remark: String,
+    bgColor: Color,
+    isSingleDigit: Boolean
 ) {
 
     val roundedCornerRadius = 18.sdp
@@ -707,13 +720,14 @@ fun NewCalenderView(
                                 topStart = roundedCornerRadius, topEnd = roundedCornerRadius
                             )
                         )
+                        .padding(bottom = 6.sdp)
                 ) {
                     CvTextView(
                         txt = if (isSingleDigit) "0$day" else day.toString(),
                         style = productSansBold,
                         textColor = Color.White,
                         fontSize = 32.ssp,
-                        modifier = Modifier.padding(start = 20.sdp, top = 20.sdp)
+                        modifier = Modifier.padding(start = 20.sdp, top = 16.sdp)
                     )
 
                     CvTextView(
@@ -722,7 +736,7 @@ fun NewCalenderView(
                         textColor = Color.White,
                         fontSize = 12.ssp,
                         modifier = Modifier
-                            .padding(start = 5.sdp, bottom = 6.sdp)
+                            .padding(start = 12.sdp, bottom = 6.sdp)
                             .align(Alignment.Bottom),
                         textAlign = TextAlign.Start
                     )
@@ -740,7 +754,7 @@ fun NewCalenderView(
                         )
                 ) {
                     CvTextView(
-                        txt = descText,
+                        txt = remark,
                         textColor = headerTxtColor,
                         fontSize = 13.ssp,
                         textAlign = TextAlign.Center,
@@ -754,84 +768,14 @@ fun NewCalenderView(
         }
 
         //1st Hook
-        Box(Modifier.offset(x = ((-107).sdp), y = ((-9).sdp))) {
+        Box(Modifier.offset(x = ((25).sdp), y = ((-9).sdp))) {
             CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
         }
 
         //2nd Hook
-        Box(Modifier.offset(x = ((-59).sdp), y = ((-9).sdp))) {
+        Box(Modifier.offset(x = ((75).sdp), y = ((-9).sdp))) {
             CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
         }
-    }
-}
-
-@Composable
-fun CalendarCard(day: String, monthAndYear: String, descText: String, bgColor: Color) {
-
-    val cornerRadius = 20.sdp
-
-    Column(
-        modifier = Modifier
-            .height(144.sdp)
-            .width(120.sdp)
-            .padding(vertical = 18.sdp)
-            .background(bgColor, shape = RoundedCornerShape(cornerRadius)),
-    ) {
-        Row {
-            CvTextView(
-                txt = day,
-                style = productSansBold,
-                textColor = Color.White,
-                fontSize = 32.ssp,
-                modifier = Modifier.padding(start = 20.sdp, top = 20.sdp)
-            )
-
-            CvTextView(
-                txt = monthAndYear,
-                style = robotoRegular,
-                textColor = Color.White,
-                fontSize = 12.ssp,
-                modifier = Modifier
-                    .padding(start = 5.sdp, bottom = 6.sdp)
-                    .align(Alignment.Bottom),
-                textAlign = TextAlign.Start
-            )
-        }
-
-        //Desc Text with white bg
-        Box(
-            modifier = Modifier
-                .padding(end = 3.sdp, start = 1.sdp, bottom = 3.sdp)
-                .fillMaxWidth()
-                .height(56.sdp)
-                .background(
-                    Color.White,
-                    shape = RoundedCornerShape(bottomEnd = cornerRadius, bottomStart = cornerRadius)
-                )
-        ) {
-
-            CvTextView(
-                txt = descText,
-                textColor = headerTxtColor,
-                fontSize = 13.ssp,
-                textAlign = TextAlign.Center,
-                style = robotoMedium,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 16.sdp)
-            )
-        }
-    }
-
-
-    //2nd Hook
-    Box(Modifier.offset(x = ((-48).sdp), y = ((9).sdp))) {
-        CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
-    }
-
-    //1st Hook
-    Box(Modifier.offset(x = ((-110).sdp), y = ((9).sdp))) {
-        CvImageView(painter = R.drawable.ic_hook, contentDes = stringResource(R.string.hook))
     }
 }
 
@@ -876,7 +820,7 @@ fun EarnMoreXifiPointsHeader() {
 }
 
 @Composable
-fun EarmMorePointsTask() {
+fun EarnMorePointsTask() {
 
     val taskList = listOf(
         Pair(R.drawable.ic_kyc, stringResource(R.string.kyc_task_image)),
@@ -904,42 +848,43 @@ fun EarmMorePointsTask() {
     }
 }
 
-/*@Composable
-fun CustomTabBar() {
-    val tabs = listOf("Airdrop Tickets", "Contest Rules", "FAQ’s")
-    var selectedTab by remember { mutableStateOf(0) }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(70.dp)
-            .background(unselectedTextColor),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
+/*@Composable
+fun EarnMorePointsTask() {
+
+    val taskList = listOf(
+        Pair(R.drawable.ic_kyc, stringResource(R.string.kyc_task_image)),
+        Pair(R.drawable.ic_discord, stringResource(R.string.discord_task_image)),
+        Pair(R.drawable.ic_bober, stringResource(R.string.bober_task_image)),
+        Pair(R.drawable.ic_xportal, stringResource(R.string.xportal_task_image))
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        tabs.forEachIndexed { index, title ->
-            val interactionSource = remember { MutableInteractionSource() }
-            Box(contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .height(40.dp)
-                    .padding(horizontal = 8.dp)
-                    .background(
-                        color = if (selectedTab == index) purpleBgColor else Color.Transparent,
-                        shape = RoundedCornerShape(8.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2), // 2 columns for grid layout
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+        ) {
+            items(taskList) { (painter, label) ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f), // Ensures square cells
+                    contentAlignment = Alignment.Center
+                ) {
+                    CvImageView(
+                        painter = painter,
+                        contentDes = label,
+                        modifier = Modifier.scale(0.96f)
                     )
-                    .clickable(
-                        interactionSource = interactionSource, indication = null
-                    ) {
-                        selectedTab = index
-                    }
-                    .padding(horizontal = 16.dp)) {
-                CvTextView(
-                    txt = title,
-                    textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
-                    fontSize = 14.ssp,
-                    textAlign = TextAlign.Center,
-                    style = if (selectedTab == index) productSansMedium else productSansRegular
-                )
+                }
             }
         }
     }
@@ -985,7 +930,7 @@ fun CustomTabBar() {
                     CvTextView(
                         txt = title,
                         textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
-                        fontSize = 18.ssp,
+                        fontSize = 16.ssp,
                         textAlign = TextAlign.Start,
                         style = if (selectedTab == index) productSansMedium else productSansRegular
                     )
@@ -1429,7 +1374,6 @@ fun AirdropContent() {
                             contentDes = stringResource(R.string.point_icon),
                         )
                     }
-
                 }
             }
 

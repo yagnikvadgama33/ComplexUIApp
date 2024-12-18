@@ -7,5 +7,5 @@ data class CalenderView(
     var monthAndYear: String,
     var remark: String,
     var bgColor: Color,
-    var isSingleDigit:Boolean
+    var isSingleDigit:Boolean //to to zero if single digit fount
 )
