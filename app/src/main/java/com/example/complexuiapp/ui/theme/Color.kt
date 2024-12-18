@@ -13,6 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 
 //App UI Colors
 val headerTxtColor = Color(0xFF000619)
+val bottomSheetBgColor = Color(0x990A0A0A)
 val topAppBarColor = Color(0x66000619)
 val subtitleTxtColor = Color(0xFF939393)
 val borderColor = Color(0xFFEFEFEF)

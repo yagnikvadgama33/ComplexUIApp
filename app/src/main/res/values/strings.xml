@@ -7,7 +7,7 @@
     <string name="lst_gaming">Gaming</string>
     <string name="lst_airdrop">Airdrop</string>
     <string name="lst_nft">NFT</string>
-    <string name="desc_text">BOBER is the first meme coin that flipped the entire MultiversX BOBER was inspired by a viral video meme with a beaver this is sample text for expediting view, BOBER is the first meme coin that flipped the entire MultiversX BOBER was inspired by a viral video meme with a beaver this is sample text for expediting view.</string>
+    <string name="desc_text">$BOBER is the first meme coin that flipped the entire MultiversX BOBER was inspired by a viral video meme with a beaver this is sample text for expediting view, BOBER is the first meme coin that flipped the entire MultiversX BOBER was inspired by a viral video meme with a beaver this is sample text for expediting view.</string>
     <string name="_350_nft_s">350 NFT\'s</string>
     <string name="airdrop_timeline">Airdrop Timeline</string>
     <string name="hook">hook</string>
@@ -39,7 +39,8 @@
     <string name="what_is_the_all_time_low_for_bober">What is the all-time low for BOBER?</string>
     <string name="what_is_the_fully_diluted_valuation_of_bober">What is the fully diluted valuation of BOBER?</string>
     <string name="notify_me">Notify me</string>
-    <string name="available_in">"Available in "</string>
+    <string name="available_in">"Available In "</string>
+    <string name="available_in_bottom">"Available in "</string>
     <string name="notify_arrow">notify arrow</string>
     <string name="beavers_not_only_build_dams_but_also_secure_more_airdrop_tickets">Beavers not only build dams but also secure more Airdrop tickets</string>
     <string name="_7d_11h">7 D : 11 H</string>
@@ -62,4 +63,10 @@
     <string name="help_and_support">Help and Support</string>
     <string name="help_support"><![CDATA[Help & Support]]></string>
     <string name="our_support_team_is_ready_to_answer_your_questions_24_7">Our support team is ready to answer your questions 24/7</string>
+    <string name="legal_disclaimer_title">Legal Disclaimer</string>
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="telegram">Telegram</string>
+    <string name="mail">Mail</string>
+    <string name="logo">logo</string>
 </resources>

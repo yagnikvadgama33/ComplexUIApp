@@ -79,6 +79,7 @@ import com.example.complexuiapp.helper.ssp
 import com.example.complexuiapp.ui.theme.bgCalenderActiveColor
 import com.example.complexuiapp.ui.theme.bgCalenderDeactiveColor
 import com.example.complexuiapp.ui.theme.borderColor
+import com.example.complexuiapp.ui.theme.bottomSheetBgColor
 import com.example.complexuiapp.ui.theme.bulletPointColor
 import com.example.complexuiapp.ui.theme.headerTxtColor
 import com.example.complexuiapp.ui.theme.lineColor
@@ -115,7 +116,7 @@ fun BearContent() {
     ) {
         CvImageView(
             painter = R.drawable.ic_profile_pic,
-            contentDes = "logo",
+            contentDes = stringResource(R.string.logo),
             modifier = Modifier
                 .size(80.sdp)
                 .padding(top = 2.sdp)
@@ -170,23 +171,26 @@ fun DotSeparatedList(items: List<String>) {
 }
 
 @Composable
-fun SocialMediaIcons() {
+fun SocialMediaIcons(onClick: () -> Unit) {
 
     val icons = listOf(
-        Pair(R.drawable.ic_internet, "Facebook"),
-        Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram")
+        Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
+        Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
+        Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
+        Pair(R.drawable.ic_mail, stringResource(R.string.mail)),
+        Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
+        Pair(R.drawable.ic_telegram, stringResource(R.string.telegram))
     )
 
     Box(
         modifier = Modifier.border(
-            1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
+            1.sdp, color = borderColor, shape = RoundedCornerShape(10.sdp)
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.sdp, bottom = 8.sdp, start = 20.sdp, end = 6.sdp)
+                .padding(top = 10.sdp, bottom = 10.sdp, start = 20.sdp, end = 6.sdp)
                 .background(Color.White, shape = RoundedCornerShape(14.sdp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -195,7 +199,7 @@ fun SocialMediaIcons() {
                     .fillMaxWidth()
                     .weight(0.8f),
                 horizontalArrangement = if (icons.size <= 4) Arrangement.spacedBy(
-                    26.sdp,
+                    32.sdp,
                     Alignment.CenterHorizontally
                 ) else Arrangement.spacedBy(18.sdp, Alignment.Start)
             ) {
@@ -203,23 +207,26 @@ fun SocialMediaIcons() {
                 icons.forEachIndexed { index, (icon, label) ->
                     if (index < 4) {
                         CvImageView(
-                            painter = icon, label, modifier = Modifier.size(24.sdp)
+                            painter = icon, label, modifier = Modifier.size(22.sdp)
                         )
                     }
                 }
             }
             if (icons.size > 4) {
-                MoreSocialIconsView(icons.size - 4, Modifier.weight(0.17f))
+                MoreSocialIconsView(icons.size - 4, Modifier.weight(0.17f), onClick)
             }
         }
     }
 }
 
 @Composable
-fun MoreSocialIconsView(iconNum: Int, modifier: Modifier) {
+fun MoreSocialIconsView(iconNum: Int, modifier: Modifier, onClick: () -> Unit) {
     Box(
         modifier = modifier
-            .background(liteGreyColor, RoundedCornerShape(8.sdp)),
+            .background(liteGreyColor, RoundedCornerShape(8.sdp))
+            .clickable {
+                onClick.invoke()
+            },
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -250,39 +257,48 @@ fun MoreSocialIconsView(iconNum: Int, modifier: Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SocialLinksBottomSheet() {
+fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(true) }
 
+    val icons = listOf(
+        Pair(R.drawable.ic_internet, "Facebook"),
+        Pair(R.drawable.ic_x, "Twitter"),
+        Pair(R.drawable.ic_telegram, "Telegram"),
+        Pair(R.drawable.ic_mail, "Coingeko"),
+        Pair(R.drawable.ic_internet, "Facebook"),
+        Pair(R.drawable.ic_x, "Twitter"),
+        Pair(R.drawable.ic_telegram, "Telegram"),
+    )
+
     if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
+            onDismissRequest = {
+                onDismiss.invoke()
+                showBottomSheet = false
+            },
             sheetState = sheetState,
-            containerColor = Color.White,
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            modifier = Modifier.fillMaxWidth()
+            containerColor = unselectedTextColor,
+            shape = RoundedCornerShape(20.dp),
+            scrimColor = bottomSheetBgColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 14.sdp, end = 14.sdp, bottom = 20.sdp),
+            dragHandle = {
+
+            }
+
         ) {
             Column(
                 Modifier.fillMaxWidth()
             ) {
                 // Title
-                Text(
-                    text = stringResource(R.string.social_links),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF8A2BE2), // Purple color
-                    modifier = Modifier.padding(bottom = 30.dp, start = 30.sdp)
-                )
-
-                // Grid Icons
-                val icons = listOf(
-                    Pair(R.drawable.ic_internet, "Facebook"),
-                    Pair(R.drawable.ic_x, "Twitter"),
-                    Pair(R.drawable.ic_telegram, "Telegram"),
-                    Pair(R.drawable.ic_mail, "Coingeko"),
-                    Pair(R.drawable.ic_internet, "Facebook"),
-                    Pair(R.drawable.ic_x, "Twitter"),
-                    Pair(R.drawable.ic_telegram, "Telegram"),
+                CvTextView(
+                    txt = stringResource(R.string.social_links),
+                    fontSize = 22.sp,
+                    style = sfProDisplayBold,
+                    textColor = Color(0xFF8A2BE2), // Purple color
+                    modifier = Modifier.padding(bottom = 22.dp, start = 32.sdp, top = 34.sdp)
                 )
 
                 // 3x3 Grid Layout
@@ -296,11 +312,17 @@ fun SocialLinksBottomSheet() {
 fun SocialLinksGrid(icons: List<Pair<Int, String>>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        // horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.sdp)
     ) {
         for (rowIcons in icons.chunked(4)) {
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.spacedBy(10.sdp, Alignment.Start),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.sdp, bottom = 12.sdp)
             ) {
                 rowIcons.forEach { (icon, label) ->
                     SocialLinkItem(icon = icon, label = label)
@@ -329,7 +351,7 @@ fun SocialLinkItem(icon: Int, label: String) {
                 painter = icon,
                 contentDes = label,
                 contextScale = ContentScale.Fit,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(34.dp)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -337,7 +359,7 @@ fun SocialLinkItem(icon: Int, label: String) {
             txt = label,
             fontSize = 12.sp,
             textColor = subtitleTxtColor,
-            textAlign = TextAlign.Center
+            style = robotoRegular
         )
     }
 }
@@ -432,7 +454,8 @@ fun ExpandableText(
                 }
             },
             style = robotoRegular,
-            fontSize = 13.ssp
+            fontSize = 15.ssp,
+            letterSpacing = TextUnit(0.1f, TextUnitType.Sp)
         )
     }
 }
@@ -513,10 +536,10 @@ fun WaveItems() {
 
     Row(
         modifier = Modifier
-            .padding(start = 14.sdp)
             .horizontalScroll(state = ScrollState(0)),
         horizontalArrangement = Arrangement.Start
     ) {
+        Spacer(modifier = Modifier.width(14.sdp))
         nftItems.forEach {
             Column(
                 modifier = Modifier
@@ -554,41 +577,6 @@ fun WaveItems() {
             }
         }
     }
-
-    /*Column(
-        modifier = Modifier
-            .width(130.sdp)
-            .height(155.sdp)
-            .padding(8.sdp)
-            .background(
-                Color.White, shape = RoundedCornerShape(12.sdp)
-            ), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(Modifier.height(8.sdp))
-
-        CvImageView(
-            painter = R.drawable.ic_nft, contentDes = stringResource(R.string.ntf_icon)
-        )
-        Spacer(Modifier.height(12.sdp))
-
-        CvTextView(
-            txt = stringResource(R.string._350_nft_s),
-            fontSize = 16.ssp,
-            style = sfProDisplayRegular,
-            fontWeight = FontWeight.SemiBold
-        )
-        Spacer(Modifier.height(8.sdp))
-
-        CvTextView(
-            txt = stringResource(R.string.to_be_won_during_this_airdrop),
-            fontSize = 12.ssp,
-            style = robotoRegular,
-            textColor = subtitleTxtColor,
-            modifier = Modifier.padding(horizontal = 3.sdp),
-            textAlign = TextAlign.Center,
-            letterSpacing = TextUnit(0.2f, TextUnitType.Sp)
-        )
-    }*/
 }
 
 @Composable
@@ -693,7 +681,7 @@ fun NewCalenderView(
     day: Int, monthAndYear: String, descText: String, bgColor: Color, isSingleDigit: Boolean
 ) {
 
-    val roundedCornerRadius = 22.sdp
+    val roundedCornerRadius = 18.sdp
 
     Box(
         modifier = Modifier
@@ -705,7 +693,7 @@ fun NewCalenderView(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(end = 3.sdp)
+                .padding(end = 4.sdp)
                 .background(
                     bgCalenderDeactiveColor, shape = RoundedCornerShape(roundedCornerRadius)
                 )
@@ -904,7 +892,7 @@ fun EarmMorePointsTask() {
     ) {
         for (rowIcons in taskList.chunked(2)) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(2.sdp)
+                horizontalArrangement = Arrangement.spacedBy(6.sdp)
             ) {
                 rowIcons.forEach { (painter, label) ->
                     CvImageView(
@@ -977,11 +965,12 @@ fun CustomTabBar() {
         ) {
             tabs.forEachIndexed { index, title ->
                 val interactionSource = remember { MutableInteractionSource() }
-                Box(
-                    contentAlignment = Alignment.Center,
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .height(40.dp)
-                        .padding(horizontal = 10.dp)
+                        .height(46.dp)
+                        .padding(horizontal = 6.dp)
                         .background(
                             color = if (selectedTab == index) purpleBgColor else Color.Transparent,
                             shape = RoundedCornerShape(8.dp)
@@ -996,7 +985,7 @@ fun CustomTabBar() {
                     CvTextView(
                         txt = title,
                         textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
-                        fontSize = 16.ssp,
+                        fontSize = 18.ssp,
                         textAlign = TextAlign.Start,
                         style = if (selectedTab == index) productSansMedium else productSansRegular
                     )
@@ -1032,9 +1021,6 @@ fun ContestRulesPointWithBullet() {
             stringResource(R.string.collect_a_bober_nft_desc)
         )
     )
-
-
-//    Spacer(Modifier.height(34.sdp))
 
     Column(modifier = Modifier.padding(start = 24.sdp, end = 12.sdp, top = 4.sdp)) {
         contestRulesPoint.forEachIndexed { index, (title, description) ->
@@ -1184,7 +1170,7 @@ fun HelpAndSupport() {
         Column(
             modifier = Modifier
                 .padding(vertical = 14.sdp)
-                .weight(0.6f)
+                .weight(0.7f)
         ) {
             CvTextView(
                 txt = stringResource(R.string.help_support),
@@ -1198,7 +1184,9 @@ fun HelpAndSupport() {
                 style = robotoRegular,
                 fontSize = 14.ssp,
                 textColor = subtitleTxtColor,
-                modifier = Modifier.padding(top = 6.sdp)
+                modifier = Modifier
+                    .padding(top = 6.sdp)
+                    .fillMaxWidth()
             )
         }
 
@@ -1207,9 +1195,8 @@ fun HelpAndSupport() {
             stringResource(R.string.baer),
             modifier = Modifier
                 //.size(16.sdp)
-                .weight(0.2f)
-                .scale(1.1f)
-                .padding(start = 18.sdp, bottom = 8.sdp)
+                .weight(0.1f)
+                .align(Alignment.CenterVertically)
         )
     }
 }
@@ -1238,18 +1225,18 @@ fun LegalDisclaimer() {
     ) {
 
         CvTextView(
-            txt = "Legal Disclaimer",
+            txt = stringResource(R.string.legal_disclaimer_title),
             style = sfProDisplaySemiBold,
-            fontSize = 17.ssp,
+            fontSize = 19.ssp,
             textColor = headerTxtColor
         )
 
         CvTextView(
             txt = stringResource(R.string.legal_disclaimer),
             style = robotoRegular,
-            fontSize = 13.ssp,
+            fontSize = 14.ssp,
             textColor = subtitleTxtColor,
-            modifier = Modifier.padding(vertical = 26.sdp)
+            modifier = Modifier.padding(vertical = 22.sdp)
         )
     }
 }
@@ -1292,19 +1279,19 @@ fun NotifyViewWithTimer() {
         ) {
 
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Center
             ) {
                 CvTextView(
-                    txt = stringResource(R.string.available_in),
+                    txt = stringResource(R.string.available_in_bottom),
                     style = robotoRegular,
-                    fontSize = 14.ssp,
+                    fontSize = 15.ssp,
                     textColor = headerTxtColor
                 )
 
-                CvTextView(txt = "${days}D : ${hours}H : ${minutes}M : ${seconds}S",
+                CvTextView(txt = "${days} D : ${hours} H",
                     style = productSansBold,
-                    fontSize = 15.ssp,
+                    fontSize = 17.ssp,
                     modifier = Modifier
                         .graphicsLayer(alpha = 0.99f)
                         .drawWithCache {
@@ -1322,10 +1309,10 @@ fun NotifyViewWithTimer() {
 
             // Notify Button
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
                 CvTextView(
-                    txt = "\uD83D\uDC49 ", fontSize = 18.sp, textAlign = TextAlign.Center
+                    txt = "\uD83D\uDC49 ", fontSize = 15.sp, textAlign = TextAlign.Center
                 )
                 CvTextView(
                     txt = stringResource(R.string.notify_me),
@@ -1339,7 +1326,7 @@ fun NotifyViewWithTimer() {
                     modifier = Modifier
                         .rotate(180f)
                         .padding(start = 8.sdp, end = 8.sdp, bottom = 3.sdp)
-                        .size(16.sdp),
+                        .size(18.sdp),
                     colorFilter = ColorFilter.tint(purperTextColor)
                 )
             }
@@ -1349,7 +1336,6 @@ fun NotifyViewWithTimer() {
 
 @Composable
 fun AirdropContent() {
-//    Spacer(Modifier.height(20.sdp))
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1357,7 +1343,7 @@ fun AirdropContent() {
             .paint(painter = painterResource(R.drawable.bg_texture))
 
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.sdp)) {
+        Column(modifier = Modifier.padding(start = 16.sdp, end = 16.sdp, top = 10.sdp)) {
             CvTextView(
                 txt = stringResource(R.string.beavers_not_only_build_dams_but_also_secure_more_airdrop_tickets),
                 textColor = headerTxtColor,
@@ -1381,7 +1367,7 @@ fun AirdropContent() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                //Avalible in
+                //Available in
                 Column(modifier = Modifier.weight(0.8f)) {
                     CvTextView(
                         txt = stringResource(R.string.available_in),
@@ -1390,7 +1376,7 @@ fun AirdropContent() {
                         fontSize = 11.ssp
                     )
 
-                    Spacer(Modifier.height(6.sdp))
+                    Spacer(Modifier.height(2.sdp))
 
                     CvTextView(
                         txt = stringResource(R.string._7d_11h),
@@ -1406,7 +1392,7 @@ fun AirdropContent() {
                     contentDes = stringResource(R.string.vertical_doted_line),
                     modifier = Modifier
                         .weight(0.1f)
-                        .size(56.sdp)
+                        .size(58.sdp)
                 )
 
                 //Get using
@@ -1422,21 +1408,28 @@ fun AirdropContent() {
                         txt = stringResource(R.string.get_using),
                         textColor = headerTxtColor,
                         style = productSansRegular,
-                        fontSize = 11.ssp
+                        fontSize = 11.ssp,
+                        modifier = Modifier.padding(top = 3.sdp)
                     )
 
-                    CvTextView(
-                        txt = stringResource(R.string._20),
-                        textColor = headerTxtColor,
-                        style = productSansBold,
-                        fontSize = 18.ssp,
-                        modifier = Modifier.padding(start = 14.sdp, end = 10.sdp)
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(start = 16.sdp)
+                    ) {
+                        CvTextView(
+                            txt = stringResource(R.string._20),
+                            textColor = headerTxtColor,
+                            style = productSansBold,
+                            fontSize = 20.ssp,
+                            modifier = Modifier.padding(end = 6.sdp)
+                        )
 
-                    CvImageView(
-                        painter = R.drawable.ic_point,
-                        contentDes = stringResource(R.string.point_icon),
-                    )
+                        CvImageView(
+                            painter = R.drawable.ic_point,
+                            contentDes = stringResource(R.string.point_icon),
+                        )
+                    }
+
                 }
             }
 
@@ -1458,28 +1451,31 @@ fun AirdropContent() {
                 CvTextView(
                     txt = "\uD83D\uDC49 ", fontSize = 18.sp, textAlign = TextAlign.Center
                 )
-                CvTextView(
-                    txt = stringResource(R.string.notify_me),
-                    style = sfProDisplayBold,
-                    textColor = txtPinkColor,
-                    fontSize = 18.ssp,
-                    letterSpacing = TextUnit(0.4f, TextUnitType.Sp),
-                    modifier = Modifier.padding(end = 12.sdp)
-                )
-                CvImageView(
-                    painter = R.drawable.ic_notify_icon,
-                    contentDes = stringResource(R.string.more_about_bober_banner),
-                    modifier = Modifier
-                        .padding(top = 5.sdp)
-                        .size(12.sdp)
-                )
-
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CvTextView(
+                        txt = stringResource(R.string.notify_me),
+                        style = sfProDisplayBold,
+                        textColor = txtPinkColor,
+                        fontSize = 22.ssp,
+                        letterSpacing = TextUnit(0.4f, TextUnitType.Sp),
+                        modifier = Modifier.padding(end = 12.sdp)
+                    )
+                    CvImageView(
+                        painter = R.drawable.ic_notify_icon,
+                        contentDes = stringResource(R.string.more_about_bober_banner),
+                        modifier = Modifier
+                            .size(14.sdp)
+                    )
+                }
             }
 
             CvImageView(
                 painter = R.drawable.ic_curved_line,
                 contentDes = stringResource(R.string.curved_line),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .scale(1.2f)
+                    .padding(end = 6.sdp)
             )
         }
     }

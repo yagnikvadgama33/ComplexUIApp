@@ -1,60 +1,40 @@
 package com.example.complexuiapp
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.complexuiapp.helper.sdp
-import com.example.complexuiapp.helper.ssp
 import com.example.complexuiapp.ui.theme.headerTxtColor
-import com.example.complexuiapp.ui.theme.robotoRegular
 import com.example.complexuiapp.ui.theme.sfProDisplayRegular
-import kotlin.math.PI
-import kotlin.math.sin
 
 @Composable
-fun CvIconButton(iconPath: Int, iconDescription: String, modifier: Modifier, onClick: () -> Unit) {
+fun CvIconButton(
+    iconPath: Int,
+    iconDescription: String,
+    modifier: Modifier,
+    onClick: () -> Unit
+) {
     androidx.compose.material3.IconButton(modifier = modifier,
         content = {
             Image(painterResource(iconPath), contentDescription = iconDescription)
@@ -63,7 +43,6 @@ fun CvIconButton(iconPath: Int, iconDescription: String, modifier: Modifier, onC
             onClick.invoke()
         })
 }
-
 
 @Composable
 fun CircularImageWithBackground(

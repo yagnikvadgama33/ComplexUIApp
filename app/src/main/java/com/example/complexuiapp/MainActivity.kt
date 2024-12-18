@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -70,14 +71,17 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val scrollState = rememberScrollState()
-            var isShowMoreSocialIconsClicked by remember { mutableStateOf(false) }
 
             ComplexUIAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = if (scrollState.value <= 1) Color.Transparent else topAppBarColor,
+                                containerColor = if (scrollState.value <= 1) {
+                                    Color.Transparent
+                                } else {
+                                    topAppBarColor
+                                }
                             ),
                             title = {},
                             navigationIcon = {
@@ -87,18 +91,15 @@ class MainActivity : ComponentActivity() {
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     CvIconButton(
-                                        R.drawable.ic_back,
+                                        iconPath = R.drawable.ic_back,
                                         modifier = Modifier.padding(start = 8.sdp),
                                         iconDescription = stringResource(R.string.back)
                                     ) { }
                                     CircularImageWithBackground(
-                                        R.drawable.ic_airdrop,
+                                        imageSrc = R.drawable.ic_airdrop,
                                         contentDescription = stringResource(R.string.airdrop),
                                         modifier = Modifier
-                                            .padding(end = 26.sdp)
-                                            .clickable {
-                                                isShowMoreSocialIconsClicked = true
-                                            },
+                                            .padding(end = 26.sdp),
                                         bgColor = Color.White,
                                         imgSize = 46.sdp
                                     )
@@ -110,11 +111,6 @@ class MainActivity : ComponentActivity() {
                         NotifyViewWithTimer()
                     }) { innerPadding ->
                     MainAScreenUI(scrollState, innerPadding)
-
-                    //Check for icon click
-                    if (isShowMoreSocialIconsClicked) {
-                        SocialLinksBottomSheet()
-                    }
                 }
             }
         }
@@ -123,9 +119,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainAScreenUI(
-    scrollState: androidx.compose.foundation.ScrollState, paddingValues: PaddingValues
+    scrollState: ScrollState,
+    paddingValues: PaddingValues
 ) {
 
+    var isShowMoreSocialIconsClicked by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -183,7 +181,9 @@ fun MainAScreenUI(
                         Spacer(Modifier.height(12.sdp))
 
                         //Social Icons
-                        SocialMediaIcons()
+                        SocialMediaIcons(onClick = {
+                            isShowMoreSocialIconsClicked = true
+                        })
 
                         Spacer(Modifier.height(22.sdp))
 
@@ -236,5 +236,15 @@ fun MainAScreenUI(
 
             }
         }
+    }
+
+    //Check for icon click
+    if (isShowMoreSocialIconsClicked) {
+        SocialLinksBottomSheet(
+            onDismiss =
+            {
+                isShowMoreSocialIconsClicked = false
+            }
+        )
     }
 }
