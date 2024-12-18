@@ -42,7 +42,7 @@
     <string name="available_in">"Available in "</string>
     <string name="notify_arrow">notify arrow</string>
     <string name="beavers_not_only_build_dams_but_also_secure_more_airdrop_tickets">Beavers not only build dams but also secure more Airdrop tickets</string>
-    <string name="_7d_11h">7D : 11H</string>
+    <string name="_7d_11h">7 D : 11 H</string>
     <string name="get_using">GET USING</string>
     <string name="_20">20</string>
     <string name="point_icon">point icon</string>
@@ -56,4 +56,10 @@
     <string name="airdrop_and_tasks_launch">Airdrop and tasks launch</string>
     <string name="start_of_ticket_sale">Start of ticket Sale</string>
     <string name="ticket_sale_closing">Ticket Sale Closing</string>
+    <string name="airdrop_tickets">Airdrop Tickets</string>
+    <string name="contest_rules">Contest Rules</string>
+    <string name="faq_s">FAQ’s</string>
+    <string name="help_and_support">Help and Support</string>
+    <string name="help_support"><![CDATA[Help & Support]]></string>
+    <string name="our_support_team_is_ready_to_answer_your_questions_24_7">Our support team is ready to answer your questions 24/7</string>
 </resources>

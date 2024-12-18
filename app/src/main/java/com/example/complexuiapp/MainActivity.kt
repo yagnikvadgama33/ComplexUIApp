@@ -6,6 +6,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ import com.example.complexuiapp.components.WaveItems
 import com.example.complexuiapp.components.WavyCanvasView
 import com.example.complexuiapp.helper.sdp
 import com.example.complexuiapp.ui.theme.ComplexUIAppTheme
+import com.example.complexuiapp.ui.theme.topAppBarColor
 
 class MainActivity : ComponentActivity() {
 
@@ -68,45 +70,51 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val scrollState = rememberScrollState()
+            var isShowMoreSocialIconsClicked by remember { mutableStateOf(false) }
 
             ComplexUIAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = Color.Transparent,
+                                containerColor = if (scrollState.value <= 1) Color.Transparent else topAppBarColor,
                             ),
                             title = {},
                             navigationIcon = {
                                 Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     CvIconButton(
                                         R.drawable.ic_back,
-                                        modifier = Modifier
-                                            .padding(start = 8.sdp),
+                                        modifier = Modifier.padding(start = 8.sdp),
                                         iconDescription = stringResource(R.string.back)
                                     ) { }
                                     CircularImageWithBackground(
                                         R.drawable.ic_airdrop,
                                         contentDescription = stringResource(R.string.airdrop),
                                         modifier = Modifier
-                                            .padding(end = 26.sdp),
+                                            .padding(end = 26.sdp)
+                                            .clickable {
+                                                isShowMoreSocialIconsClicked = true
+                                            },
                                         bgColor = Color.White,
                                         imgSize = 46.sdp
                                     )
                                 }
-                            }
-                        )
+                            })
                     },
                     bottomBar = {
                         //Bottom Notify View
                         NotifyViewWithTimer()
                     }) { innerPadding ->
                     MainAScreenUI(scrollState, innerPadding)
+
+                    //Check for icon click
+                    if (isShowMoreSocialIconsClicked) {
+                        SocialLinksBottomSheet()
+                    }
                 }
             }
         }
@@ -115,10 +123,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainAScreenUI(
-    scrollState: androidx.compose.foundation.ScrollState,
-    paddingValues: PaddingValues
+    scrollState: androidx.compose.foundation.ScrollState, paddingValues: PaddingValues
 ) {
-    var isShowMoreSocialIconsClicked by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -133,8 +139,7 @@ fun MainAScreenUI(
                 .background(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFF00C7D8),
-                            Color(0xFF23869A)
+                            Color(0xFF00C7D8), Color(0xFF23869A)
                         )
                     )
                 ),
@@ -178,9 +183,7 @@ fun MainAScreenUI(
                         Spacer(Modifier.height(12.sdp))
 
                         //Social Icons
-                        SocialMediaIcons(onClick = {
-                            isShowMoreSocialIconsClicked = true
-                        })
+                        SocialMediaIcons()
 
                         Spacer(Modifier.height(22.sdp))
 
@@ -200,7 +203,7 @@ fun MainAScreenUI(
                     WaveItems()
                 }
 
-                Spacer(Modifier.height(20.sdp))
+                Spacer(Modifier.height(19.sdp))
 
                 //Airdrop Timeline
                 AirdropTimeline(stringResource(R.string.airdrop_timeline))
@@ -214,17 +217,17 @@ fun MainAScreenUI(
 
                 EarmMorePointsTask()
 
-                Spacer(Modifier.height(22.sdp))
+                Spacer(Modifier.height(26.sdp))
 
                 //Tab Bar
                 CustomTabBar()
 
-                Spacer(Modifier.height(22.sdp))
+                Spacer(Modifier.height(26.sdp))
 
                 //More About Bober Section
                 MoreAboutBober()
 
-                Spacer(Modifier.height(32.sdp))
+                Spacer(Modifier.height(35.sdp))
 
                 //Legal Disclaimer
                 LegalDisclaimer()
@@ -233,13 +236,5 @@ fun MainAScreenUI(
 
             }
         }
-
-//        //Bottom Notify View
-//        NotifyViewWithTimer()
-    }
-
-    //Check for icon click
-    if (isShowMoreSocialIconsClicked) {
-        SocialLinksBottomSheet()
     }
 }

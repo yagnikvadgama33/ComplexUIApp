@@ -90,6 +90,7 @@ import com.example.complexuiapp.ui.theme.productSansRegular
 import com.example.complexuiapp.ui.theme.purperTextColor
 import com.example.complexuiapp.ui.theme.purpleBgColor
 import com.example.complexuiapp.ui.theme.purpleColor
+import com.example.complexuiapp.ui.theme.robotoBold
 import com.example.complexuiapp.ui.theme.robotoMedium
 import com.example.complexuiapp.ui.theme.robotoRegular
 import com.example.complexuiapp.ui.theme.sfProDisplayBold
@@ -169,24 +170,12 @@ fun DotSeparatedList(items: List<String>) {
 }
 
 @Composable
-fun SocialMediaIcons(onClick: () -> Unit) {
+fun SocialMediaIcons() {
 
     val icons = listOf(
         Pair(R.drawable.ic_internet, "Facebook"),
         Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram"),
-        Pair(R.drawable.ic_mail, "Coingeko"),
-        Pair(R.drawable.ic_internet, "Facebook"),
-        Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram"),
-        Pair(R.drawable.ic_internet, "Facebook"),
-        Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram"),
-        Pair(R.drawable.ic_mail, "Coingeko"),
-        Pair(R.drawable.ic_internet, "Facebook"),
-        Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram"),
-        Pair(R.drawable.ic_mail, "Coingeko"),
+        Pair(R.drawable.ic_telegram, "Telegram")
     )
 
     Box(
@@ -515,28 +504,35 @@ fun WaveItems() {
             stringResource(R.string._350_nft_s),
             stringResource(R.string.to_be_won_during_this_airdrop)
         ),
+        NtfItems(
+            R.drawable.ic_nft,
+            stringResource(R.string._350_nft_s),
+            stringResource(R.string.to_be_won_during_this_airdrop)
+        )
     )
 
     Row(
-        modifier = Modifier,
+        modifier = Modifier
+            .padding(start = 14.sdp)
+            .horizontalScroll(state = ScrollState(0)),
         horizontalArrangement = Arrangement.Start
     ) {
         nftItems.forEach {
             Column(
                 modifier = Modifier
-                    .width(130.sdp)
-                    .height(155.sdp)
-                    .padding(8.sdp)
+                    .width(125.sdp)
+                    .height(150.sdp)
+                    .padding(vertical = 8.sdp, horizontal = 5.sdp)
                     .background(
                         Color.White, shape = RoundedCornerShape(12.sdp)
                     ), horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(8.sdp))
+                Spacer(Modifier.height(6.sdp))
 
                 CvImageView(
                     painter = it.icon, contentDes = stringResource(R.string.ntf_icon)
                 )
-                Spacer(Modifier.height(12.sdp))
+                Spacer(Modifier.height(8.sdp))
 
                 CvTextView(
                     txt = it.title,
@@ -551,7 +547,7 @@ fun WaveItems() {
                     fontSize = 12.ssp,
                     style = robotoRegular,
                     textColor = subtitleTxtColor,
-                    modifier = Modifier.padding(horizontal = 3.sdp),
+                    modifier = Modifier.padding(horizontal = 6.sdp),
                     textAlign = TextAlign.Center,
                     letterSpacing = TextUnit(0.2f, TextUnitType.Sp)
                 )
@@ -674,7 +670,7 @@ fun AirdropTimeline(strTitle: String) {
     Column {
         // "Airdrop Timeline" Title Text
         GradiantTitleText(strTitle)
-        Spacer(Modifier.height(22.sdp))
+        Spacer(Modifier.height(36.sdp))
 
         //Calender View's
         Row(
@@ -702,7 +698,7 @@ fun NewCalenderView(
     Box(
         modifier = Modifier
             .height(115.sdp)
-            .width(135.sdp)
+            .width(137.sdp)
             .padding(start = 14.sdp)
             .background(bgCalenderDeactiveColor, shape = RoundedCornerShape(roundedCornerRadius))
     ) {
@@ -963,7 +959,11 @@ fun CustomTabBar() {
 
 @Composable
 fun CustomTabBar() {
-    val tabs = listOf("Airdrop Tickets", "Contest Rules", "FAQ’s")
+    val tabs = listOf(
+        stringResource(R.string.airdrop_tickets),
+        stringResource(R.string.contest_rules),
+        stringResource(R.string.faq_s)
+    )
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -977,10 +977,11 @@ fun CustomTabBar() {
         ) {
             tabs.forEachIndexed { index, title ->
                 val interactionSource = remember { MutableInteractionSource() }
-                Box(contentAlignment = Alignment.Center,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .height(40.dp)
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 10.dp)
                         .background(
                             color = if (selectedTab == index) purpleBgColor else Color.Transparent,
                             shape = RoundedCornerShape(8.dp)
@@ -990,12 +991,13 @@ fun CustomTabBar() {
                         ) {
                             selectedTab = index
                         }
-                        .padding(horizontal = 16.dp)) {
+                        .padding(horizontal = 16.dp) //Padding for rounded box
+                ) {
                     CvTextView(
                         txt = title,
                         textColor = if (selectedTab == index) purpleColor else subtitleTxtColor,
-                        fontSize = 14.ssp,
-                        textAlign = TextAlign.Center,
+                        fontSize = 16.ssp,
+                        textAlign = TextAlign.Start,
                         style = if (selectedTab == index) productSansMedium else productSansRegular
                     )
                 }
@@ -1034,7 +1036,7 @@ fun ContestRulesPointWithBullet() {
 
 //    Spacer(Modifier.height(34.sdp))
 
-    Column(modifier = Modifier.padding(start = 20.sdp, end = 12.sdp)) {
+    Column(modifier = Modifier.padding(start = 24.sdp, end = 12.sdp, top = 4.sdp)) {
         contestRulesPoint.forEachIndexed { index, (title, description) ->
 
             TextWithBullet(title, index)
@@ -1044,7 +1046,7 @@ fun ContestRulesPointWithBullet() {
                 style = robotoRegular,
                 textColor = subtitleTxtColor,
                 fontSize = 14.ssp,
-                letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
+                letterSpacing = TextUnit(0.3f, TextUnitType.Sp),
                 modifier = Modifier.padding(top = 14.sdp, start = 22.sdp, end = 10.sdp)
             )
         }
@@ -1058,7 +1060,7 @@ fun TextWithBullet(txt: String, index: Int) {
         modifier = Modifier.padding(top = if (index >= 1) 16.sdp else 0.sdp)
     ) {
         Canvas(
-            modifier = Modifier.size(8.dp)
+            modifier = Modifier.size(6.dp)
         ) {
             drawCircle(bulletPointColor)
         }
@@ -1068,7 +1070,7 @@ fun TextWithBullet(txt: String, index: Int) {
             style = robotoMedium,
             textColor = headerTxtColor,
             fontSize = 16.ssp,
-            modifier = Modifier.padding(start = 14.sdp)
+            modifier = Modifier.padding(start = 16.sdp)
         )
     }
 
@@ -1099,18 +1101,17 @@ fun ExpandableFaqList() {
     var expandedIndex by remember { mutableIntStateOf(-1) }
 
 
-//    Spacer(Modifier.height(20.sdp))
-    Row {
-        Column(modifier = Modifier.padding(start = 16.sdp, end = 16.sdp)) {
-            faqPoints.forEachIndexed { index, faq ->
-                ExpandableTextView(title = faq.first,
-                    description = faq.second,
-                    isExpanded = expandedIndex == index,
-                    onTitleClick = {
-                        expandedIndex = if (expandedIndex == index) -1 else index
-                    })
-            }
+    Column(modifier = Modifier.padding(start = 22.sdp, end = 16.sdp)) {
+        faqPoints.forEachIndexed { index, faq ->
+            ExpandableTextView(title = faq.first,
+                description = faq.second,
+                isExpanded = expandedIndex == index,
+                onTitleClick = {
+                    expandedIndex = if (expandedIndex == index) -1 else index
+                })
         }
+
+        HelpAndSupport()
     }
 }
 
@@ -1126,7 +1127,7 @@ fun ExpandableTextView(
             painter = R.drawable.ic_trangle,
             contentDes = stringResource(R.string.bullet_point),
             modifier = Modifier
-                .size(14.sdp)
+                .size(12.sdp)
                 .padding(top = 2.sdp)
                 .rotate(if (isExpanded) 360f else 270f)
         )
@@ -1142,8 +1143,9 @@ fun ExpandableTextView(
                         indication = null, // Disable the ripple effect
                         onClick = onTitleClick // Trigger click event for title
                     )
-                    .padding(bottom = 4.dp),
-                style = robotoMedium
+                    .padding(bottom = 2.dp, start = 4.sdp),
+                style = robotoMedium,
+                letterSpacing = TextUnit(0.3f, TextUnitType.Sp)
             )
 
             // Description
@@ -1153,11 +1155,62 @@ fun ExpandableTextView(
                     fontSize = 13.sp,
                     color = subtitleTxtColor,
                     style = robotoRegular,
-                    modifier = Modifier.padding(top = 12.sdp),
-                    letterSpacing = TextUnit(0.2f, TextUnitType.Sp)
+                    modifier = Modifier.padding(top = 12.sdp, start = 4.sdp),
+                    letterSpacing = TextUnit(0.3f, TextUnitType.Sp)
                 )
             }
         }
+    }
+}
+
+@Composable
+fun HelpAndSupport() {
+
+    Row(
+        modifier = Modifier.border(
+            1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
+        ),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CvImageView(
+            painter = R.drawable.ic_help_and_support,
+            contentDes = stringResource(R.string.help_and_support),
+            modifier = Modifier
+                .padding(start = 12.sdp, end = 16.sdp, bottom = 8.sdp)
+                .weight(0.2f)
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(vertical = 14.sdp)
+                .weight(0.6f)
+        ) {
+            CvTextView(
+                txt = stringResource(R.string.help_support),
+                style = productSansMedium,
+                fontSize = 16.ssp,
+                textColor = headerTxtColor
+            )
+
+            CvTextView(
+                txt = stringResource(R.string.our_support_team_is_ready_to_answer_your_questions_24_7),
+                style = robotoRegular,
+                fontSize = 14.ssp,
+                textColor = subtitleTxtColor,
+                modifier = Modifier.padding(top = 6.sdp)
+            )
+        }
+
+        CvImageView(
+            painter = R.drawable.ic_right_arrow,
+            stringResource(R.string.baer),
+            modifier = Modifier
+                //.size(16.sdp)
+                .weight(0.2f)
+                .scale(1.1f)
+                .padding(start = 18.sdp, bottom = 8.sdp)
+        )
     }
 }
 
@@ -1168,7 +1221,7 @@ fun MoreAboutBober() {
     //Title text
     GradiantTitleText(stringResource(R.string.more_about_bober))
 
-    Spacer(Modifier.height(22.sdp))
+    Spacer(Modifier.height(28.sdp))
 
     CvImageView(
         painter = R.drawable.more_about_bober,
@@ -1248,9 +1301,10 @@ fun NotifyViewWithTimer() {
                     fontSize = 14.ssp,
                     textColor = headerTxtColor
                 )
+
                 CvTextView(txt = "${days}D : ${hours}H : ${minutes}M : ${seconds}S",
-                    style = productSansRegular,
-                    fontSize = 14.ssp,
+                    style = productSansBold,
+                    fontSize = 15.ssp,
                     modifier = Modifier
                         .graphicsLayer(alpha = 0.99f)
                         .drawWithCache {
@@ -1275,9 +1329,9 @@ fun NotifyViewWithTimer() {
                 )
                 CvTextView(
                     txt = stringResource(R.string.notify_me),
-                    style = productSansMedium,
+                    style = productSansBold,
                     textColor = purperTextColor,
-                    fontSize = 15.ssp
+                    fontSize = 16.ssp
                 )
                 CvImageView(
                     painter = R.drawable.ic_back,
@@ -1298,8 +1352,10 @@ fun AirdropContent() {
 //    Spacer(Modifier.height(20.sdp))
     Column(
         modifier = Modifier
-            .paint(painter = painterResource(R.drawable.bg_texture))
             .fillMaxWidth()
+            .padding(start = 6.sdp, end = 6.sdp, top = 3.sdp)
+            .paint(painter = painterResource(R.drawable.bg_texture))
+
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.sdp)) {
             CvTextView(
@@ -1307,9 +1363,9 @@ fun AirdropContent() {
                 textColor = headerTxtColor,
                 style = productSansMedium,
                 fontSize = 20.ssp,
-                letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
+                letterSpacing = TextUnit(0.1f, TextUnitType.Sp),
                 modifier = Modifier.padding(
-                    start = 34.sdp, end = 100.sdp, top = 20.sdp
+                    start = 18.sdp, end = 100.sdp, top = 20.sdp
                 )
             )
 
@@ -1340,7 +1396,8 @@ fun AirdropContent() {
                         txt = stringResource(R.string._7d_11h),
                         textColor = headerTxtColor,
                         style = productSansBold,
-                        fontSize = 18.ssp
+                        fontSize = 19.ssp,
+                        letterSpacing = TextUnit(0.4f, TextUnitType.Sp),
                     )
                 }
 
@@ -1348,8 +1405,8 @@ fun AirdropContent() {
                     painter = R.drawable.vertical_doted_line,
                     contentDes = stringResource(R.string.vertical_doted_line),
                     modifier = Modifier
-                        .weight(0.2f)
-                        .size(60.sdp)
+                        .weight(0.1f)
+                        .size(56.sdp)
                 )
 
                 //Get using
@@ -1358,8 +1415,8 @@ fun AirdropContent() {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(0.8f)
-                        .padding(start = 12.sdp)
+                        .weight(0.9f)
+                        .padding(start = 4.sdp)
                 ) {
                     CvTextView(
                         txt = stringResource(R.string.get_using),
@@ -1390,26 +1447,31 @@ fun AirdropContent() {
                 contentDes = stringResource(R.string.more_about_bober_banner)
             )
 
+            HorizontalDotedLine()
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 18.sdp, end = 18.sdp, start = 18.sdp)
+                    .padding(top = 22.sdp, end = 18.sdp, start = 18.sdp)
             ) {
                 CvTextView(
                     txt = "\uD83D\uDC49 ", fontSize = 18.sp, textAlign = TextAlign.Center
                 )
                 CvTextView(
                     txt = stringResource(R.string.notify_me),
-                    style = productSansBold,
+                    style = sfProDisplayBold,
                     textColor = txtPinkColor,
                     fontSize = 18.ssp,
+                    letterSpacing = TextUnit(0.4f, TextUnitType.Sp),
                     modifier = Modifier.padding(end = 12.sdp)
                 )
                 CvImageView(
                     painter = R.drawable.ic_notify_icon,
                     contentDes = stringResource(R.string.more_about_bober_banner),
-                    modifier = Modifier.padding(top = 6.sdp)
+                    modifier = Modifier
+                        .padding(top = 5.sdp)
+                        .size(12.sdp)
                 )
 
             }
