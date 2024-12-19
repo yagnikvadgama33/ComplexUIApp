@@ -46,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.rotate
@@ -59,9 +60,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -88,6 +93,7 @@ import com.example.complexuiapp.ui.theme.bgCalenderActiveColor
 import com.example.complexuiapp.ui.theme.bgCalenderDeactiveColor
 import com.example.complexuiapp.ui.theme.borderColor
 import com.example.complexuiapp.ui.theme.bottomSheetBgColor
+import com.example.complexuiapp.ui.theme.bottomViewBgColor
 import com.example.complexuiapp.ui.theme.bulletPointColor
 import com.example.complexuiapp.ui.theme.headerTxtColor
 import com.example.complexuiapp.ui.theme.lineColor
@@ -104,7 +110,11 @@ import com.example.complexuiapp.ui.theme.robotoRegular
 import com.example.complexuiapp.ui.theme.sfProDisplayBold
 import com.example.complexuiapp.ui.theme.sfProDisplayRegular
 import com.example.complexuiapp.ui.theme.sfProDisplaySemiBold
+import com.example.complexuiapp.ui.theme.socialLinkTitleColorOne
+import com.example.complexuiapp.ui.theme.socialLinkTitleColorTwo
 import com.example.complexuiapp.ui.theme.subtitleTxtColor
+import com.example.complexuiapp.ui.theme.txtGradentColorOne
+import com.example.complexuiapp.ui.theme.txtGradentColorTwo
 import com.example.complexuiapp.ui.theme.txtPinkColor
 import com.example.complexuiapp.ui.theme.unselectedTextColor
 import com.example.complexuiapp.ui.theme.wavwColor
@@ -184,9 +194,12 @@ fun SocialMediaIcons(onClick: () -> Unit) {
         Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
         Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
         Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
-        Pair(R.drawable.ic_mail, stringResource(R.string.mail))
+        Pair(R.drawable.ic_mail, stringResource(R.string.mail)),
+        Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
+        Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
+        Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
     )
-    val maxIconAllow = 4
+    val maxIconAllow = 5
 
     Box(
         modifier = Modifier.border(
@@ -196,39 +209,29 @@ fun SocialMediaIcons(onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.sdp, bottom = 10.sdp, start = 20.sdp, end = 6.sdp)
+                .padding(top = 10.sdp, bottom = 10.sdp)
                 .background(Color.White, shape = RoundedCornerShape(14.sdp)),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(28.sdp, Alignment.CenterHorizontally)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.8f),
-                horizontalArrangement = if (icons.size <= maxIconAllow) Arrangement.spacedBy(
-                    32.sdp,
-                    Alignment.CenterHorizontally
-                ) else Arrangement.spacedBy(18.sdp, Alignment.Start)
-            ) {
-
-                icons.forEachIndexed { index, (icon, label) ->
-                    if (index < maxIconAllow) {
-                        CvImageView(
-                            painter = icon, label, modifier = Modifier.size(22.sdp)
-                        )
-                    }
+            icons.forEachIndexed { index, (icon, label) ->
+                if (index < maxIconAllow) {
+                    CvImageView(
+                        painter = icon, label, modifier = Modifier.size(22.sdp)
+                    )
                 }
             }
             if (icons.size > maxIconAllow) {
-                MoreSocialIconsView(icons.size - maxIconAllow, Modifier.weight(0.17f), onClick)
+                MoreSocialIconsView(icons.size - maxIconAllow, onClick)
             }
         }
     }
 }
 
 @Composable
-fun MoreSocialIconsView(iconNum: Int, modifier: Modifier, onClick: () -> Unit) {
+fun MoreSocialIconsView(iconNum: Int, onClick: () -> Unit) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .background(liteGreyColor, RoundedCornerShape(8.sdp))
             .clickable {
                 onClick.invoke()
@@ -237,8 +240,7 @@ fun MoreSocialIconsView(iconNum: Int, modifier: Modifier, onClick: () -> Unit) {
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 6.sdp, horizontal = 3.sdp),
+                .padding(vertical = 6.sdp, horizontal = 6.sdp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -272,9 +274,9 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
         Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
         Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
         Pair(R.drawable.ic_mail, stringResource(R.string.mail)),
-        Pair(R.drawable.ic_internet, "Facebook"),
-        Pair(R.drawable.ic_x, "Twitter"),
-        Pair(R.drawable.ic_telegram, "Telegram"),
+        Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
+        Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
+        Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
     )
 
     if (showBottomSheet) {
@@ -290,10 +292,7 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 14.sdp, end = 14.sdp, bottom = 20.sdp),
-            dragHandle = {
-
-            }
-
+            dragHandle = {}
         ) {
             Column(
                 Modifier.fillMaxWidth()
@@ -303,8 +302,20 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
                     txt = stringResource(R.string.social_links),
                     fontSize = 22.sp,
                     style = sfProDisplayBold,
-                    textColor = Color(0xFF8A2BE2), // Purple color
-                    modifier = Modifier.padding(bottom = 22.dp, start = 32.sdp, top = 34.sdp)
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            val brush = Brush.horizontalGradient(
+                                listOf(
+                                   socialLinkTitleColorOne, socialLinkTitleColorTwo
+                                )
+                            )
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(brush, blendMode = BlendMode.SrcAtop)
+                            }
+                        }
+                        .padding(bottom = 22.dp, start = 32.sdp, top = 34.sdp)
                 )
 
                 // 3x3 Grid Layout
@@ -368,24 +379,6 @@ fun SocialLinkItem(icon: Int, label: String) {
             style = robotoRegular
         )
     }
-}
-
-
-@Composable
-fun GradientBackground(setHeight: Float = 0.42f) {
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(setHeight)
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        Color(0xFF00C7D8), Color(0xFF23869A)
-                    )
-                )
-            )
-    )
 }
 
 @Composable
@@ -593,7 +586,7 @@ fun GradiantTitleText(strTitle: String) {
     ) {
         CvImageView(
             painter = R.drawable.ic_airdrop_timline,
-            contentDes = "airdrop timeline",
+            contentDes = stringResource(R.string.cD_airdrop_timeline),
             modifier = Modifier
                 .rotate(180f)
                 .padding(horizontal = 8.sdp)
@@ -601,7 +594,8 @@ fun GradiantTitleText(strTitle: String) {
         )
 
         CvTextView(
-            txt = strTitle, modifier = Modifier
+            txt = strTitle,
+            modifier = Modifier
                 .graphicsLayer(alpha = 0.99f)
                 .drawWithCache {
                     val brush = Brush.horizontalGradient(
@@ -848,48 +842,6 @@ fun EarnMorePointsTask() {
     }
 }
 
-
-/*@Composable
-fun EarnMorePointsTask() {
-
-    val taskList = listOf(
-        Pair(R.drawable.ic_kyc, stringResource(R.string.kyc_task_image)),
-        Pair(R.drawable.ic_discord, stringResource(R.string.discord_task_image)),
-        Pair(R.drawable.ic_bober, stringResource(R.string.bober_task_image)),
-        Pair(R.drawable.ic_xportal, stringResource(R.string.xportal_task_image))
-    )
-
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2), // 2 columns for grid layout
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        ) {
-            items(taskList) { (painter, label) ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f), // Ensures square cells
-                    contentAlignment = Alignment.Center
-                ) {
-                    CvImageView(
-                        painter = painter,
-                        contentDes = label,
-                        modifier = Modifier.scale(0.96f)
-                    )
-                }
-            }
-        }
-    }
-}*/
-
 @Composable
 fun CustomTabBar() {
     val tabs = listOf(
@@ -1042,7 +994,11 @@ fun ExpandableFaqList() {
                 })
         }
 
+        Spacer(Modifier.height(4.sdp))
+
         HelpAndSupport()
+
+        Spacer(Modifier.height(8.sdp))
     }
 }
 
@@ -1062,11 +1018,12 @@ fun ExpandableTextView(
                 .padding(top = 2.sdp)
                 .rotate(if (isExpanded) 360f else 270f)
         )
+
         Column(modifier = Modifier.padding(start = 12.sdp, bottom = 28.sdp)) {
             // Title
             CvTextView(
                 txt = title,
-                fontSize = 15.sp,
+                fontSize = 17.ssp,
                 textColor = headerTxtColor,
                 modifier = Modifier
                     .clickable(
@@ -1083,7 +1040,7 @@ fun ExpandableTextView(
             AnimatedVisibility(visible = isExpanded) {
                 Text(
                     text = description,
-                    fontSize = 13.sp,
+                    fontSize = 15.ssp,
                     color = subtitleTxtColor,
                     style = robotoRegular,
                     modifier = Modifier.padding(top = 12.sdp, start = 4.sdp),
@@ -1098,9 +1055,10 @@ fun ExpandableTextView(
 fun HelpAndSupport() {
 
     Row(
-        modifier = Modifier.border(
-            1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
-        ),
+        modifier = Modifier
+            .border(
+                1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
+            ),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1210,15 +1168,16 @@ fun NotifyViewWithTimer() {
 
     Box(
         modifier = Modifier
+            .background(bottomViewBgColor)
+            .navigationBarsPadding()
             .fillMaxWidth()
-            .height(62.sdp)
-            .background(Color(0xFFFFFBF2), RoundedCornerShape(8.sdp)),
+            .height(62.sdp),
         contentAlignment = Alignment.BottomStart
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 26.sdp, end = 26.sdp, bottom = 18.sdp),
+                .padding(start = 22.sdp, end = 22.sdp, bottom = 18.sdp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -1242,7 +1201,7 @@ fun NotifyViewWithTimer() {
                         .drawWithCache {
                             val brush = Brush.horizontalGradient(
                                 listOf(
-                                    Color(0xFF8B37F7), Color(0xFFFA8662)
+                                    txtGradentColorOne, txtGradentColorTwo
                                 )
                             )
                             onDrawWithContent {
@@ -1263,14 +1222,14 @@ fun NotifyViewWithTimer() {
                     txt = stringResource(R.string.notify_me),
                     style = productSansBold,
                     textColor = purperTextColor,
-                    fontSize = 16.ssp
+                    fontSize = 17.ssp
                 )
                 CvImageView(
                     painter = R.drawable.ic_back,
                     contentDes = stringResource(R.string.notify_arrow),
                     modifier = Modifier
                         .rotate(180f)
-                        .padding(start = 8.sdp, end = 8.sdp, bottom = 3.sdp)
+                        .padding(start = 8.sdp, end = 5.sdp, bottom = 3.sdp)
                         .size(18.sdp),
                     colorFilter = ColorFilter.tint(purperTextColor)
                 )
@@ -1288,7 +1247,7 @@ fun AirdropContent() {
             .paint(painter = painterResource(R.drawable.bg_texture))
 
     ) {
-        Column(modifier = Modifier.padding(start = 16.sdp, end = 16.sdp, top = 10.sdp)) {
+        Column(modifier = Modifier.padding(start = 12.sdp, end = 10.sdp, top = 10.sdp)) {
             CvTextView(
                 txt = stringResource(R.string.beavers_not_only_build_dams_but_also_secure_more_airdrop_tickets),
                 textColor = headerTxtColor,
@@ -1296,7 +1255,7 @@ fun AirdropContent() {
                 fontSize = 20.ssp,
                 letterSpacing = TextUnit(0.1f, TextUnitType.Sp),
                 modifier = Modifier.padding(
-                    start = 18.sdp, end = 100.sdp, top = 20.sdp
+                    start = 20.sdp, end = 100.sdp, top = 20.sdp
                 )
             )
 
@@ -1332,13 +1291,7 @@ fun AirdropContent() {
                     )
                 }
 
-                CvImageView(
-                    painter = R.drawable.vertical_doted_line,
-                    contentDes = stringResource(R.string.vertical_doted_line),
-                    modifier = Modifier
-                        .weight(0.1f)
-                        .size(58.sdp)
-                )
+                VerticalDashedLine(modifier = Modifier.height(58.sdp))
 
                 //Get using
                 Row(
@@ -1347,7 +1300,7 @@ fun AirdropContent() {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(0.9f)
-                        .padding(start = 4.sdp)
+                        .padding(start = 20.sdp)
                 ) {
                     CvTextView(
                         txt = stringResource(R.string.get_using),
@@ -1390,7 +1343,8 @@ fun AirdropContent() {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 22.sdp, end = 18.sdp, start = 18.sdp)
+                    .padding(top = 22.sdp, end = 18.sdp, start = 18.sdp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 CvTextView(
                     txt = "\uD83D\uDC49 ", fontSize = 18.sp, textAlign = TextAlign.Center
@@ -1434,6 +1388,35 @@ fun HorizontalDotedLine() {
             .background(lineColor, shape = DottedShape(step = 10.dp))
     )
 }
+
+@Composable
+fun VerticalDashedLine(
+    color: Color = lineColor,
+    modifier: Modifier = Modifier,
+    dashLength: Dp = 4.dp,
+    gapLength: Dp = 6.dp,
+    strokeWidth: Dp = 1.dp
+) {
+    Canvas(modifier = modifier) {
+        val canvasHeight = size.height
+        var currentY = 0f
+        val dashPx = dashLength.toPx()
+        val gapPx = gapLength.toPx()
+
+        while (currentY < canvasHeight) {
+            val endY = currentY + dashPx
+            drawLine(
+                color = color,
+                start = Offset(x = size.width / 2, y = currentY),
+                end = Offset(x = size.width / 2, y = endY),
+                strokeWidth = strokeWidth.toPx(),
+                cap = StrokeCap.Round
+            )
+            currentY += (dashPx + gapPx)
+        }
+    }
+}
+
 
 private data class DottedShape(
     val step: Dp
