@@ -96,6 +96,7 @@ import com.example.complexuiapp.ui.theme.bottomSheetBgColor
 import com.example.complexuiapp.ui.theme.bottomViewBgColor
 import com.example.complexuiapp.ui.theme.bulletPointColor
 import com.example.complexuiapp.ui.theme.headerTxtColor
+import com.example.complexuiapp.ui.theme.iconBgColor
 import com.example.complexuiapp.ui.theme.lineColor
 import com.example.complexuiapp.ui.theme.liteGreyColor
 import com.example.complexuiapp.ui.theme.moreIconColor
@@ -235,23 +236,17 @@ fun MoreSocialIconsView(iconNum: Int, onClick: () -> Unit) {
             .background(liteGreyColor, RoundedCornerShape(8.sdp))
             .clickable {
                 onClick.invoke()
-            },
-        contentAlignment = Alignment.Center
+            }, contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier
-                .padding(vertical = 6.sdp, horizontal = 6.sdp),
+            modifier = Modifier.padding(vertical = 6.sdp, horizontal = 6.sdp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             CvTextView(
                 txt = if (iconNum > 9) stringResource(R.string._9) else stringResource(
-                    R.string.icon_cont,
-                    iconNum
-                ),
-                style = productSansMedium,
-                fontSize = 14.ssp,
-                textColor = moreIconColor
+                    R.string.icon_cont, iconNum
+                ), style = productSansMedium, fontSize = 14.ssp, textColor = moreIconColor
             )
             CvImageView(
                 painter = R.drawable.ic_more_icons,
@@ -270,11 +265,11 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
     var showBottomSheet by remember { mutableStateOf(true) }
 
     val icons = listOf(
-        Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
+        Pair(R.drawable.ic_facebook, stringResource(R.string.facebook)),
         Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
         Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
         Pair(R.drawable.ic_mail, stringResource(R.string.mail)),
-        Pair(R.drawable.ic_internet, stringResource(R.string.facebook)),
+        Pair(R.drawable.ic_internet, stringResource(R.string.internet)),
         Pair(R.drawable.ic_x, stringResource(R.string.twitter)),
         Pair(R.drawable.ic_telegram, stringResource(R.string.telegram)),
     )
@@ -287,19 +282,17 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
             },
             sheetState = sheetState,
             containerColor = unselectedTextColor,
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(17.dp),
             scrimColor = bottomSheetBgColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 14.sdp, end = 14.sdp, bottom = 20.sdp),
-            dragHandle = {}
-        ) {
+            dragHandle = {}) {
             Column(
                 Modifier.fillMaxWidth()
             ) {
                 // Title
-                CvTextView(
-                    txt = stringResource(R.string.social_links),
+                CvTextView(txt = stringResource(R.string.social_links),
                     fontSize = 22.sp,
                     style = sfProDisplayBold,
                     modifier = Modifier
@@ -307,7 +300,7 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
                         .drawWithCache {
                             val brush = Brush.horizontalGradient(
                                 listOf(
-                                   socialLinkTitleColorOne, socialLinkTitleColorTwo
+                                    socialLinkTitleColorOne, socialLinkTitleColorTwo
                                 )
                             )
                             onDrawWithContent {
@@ -315,10 +308,8 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
                                 drawRect(brush, blendMode = BlendMode.SrcAtop)
                             }
                         }
-                        .padding(bottom = 22.dp, start = 32.sdp, top = 34.sdp)
-                )
+                        .padding(bottom = 18.dp, start = 24.sdp, top = 30.sdp))
 
-                // 3x3 Grid Layout
                 SocialLinksGrid(icons)
             }
         }
@@ -326,6 +317,57 @@ fun SocialLinksBottomSheet(onDismiss: () -> Unit) {
 }
 
 @Composable
+fun SocialLinksGrid(icons: List<Pair<Int, String>>) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 12.sdp, top = 6.dp, bottom = 22.sdp)
+    ) {
+        items(icons) { (icon, label) ->
+            SocialLinkItem(icon = icon, label = label)
+        }
+    }
+}
+
+@Composable
+fun SocialLinkItem(icon: Int, label: String) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .size(80.dp)
+            .clickable(
+                interactionSource = interactionSource, indication = null
+            ) {}
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(60.dp)
+                .background(iconBgColor, RoundedCornerShape(8.dp))
+        ) {
+            CvImageView(
+                painter = icon,
+                contentDes = label,
+                contextScale = ContentScale.Fit,
+                modifier = Modifier.size(27.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        CvTextView(
+            txt = label,
+            fontSize = 12.sp,
+            textColor = subtitleTxtColor,
+            style = robotoRegular,
+            modifier = Modifier.padding(bottom = 8.sdp)
+        )
+    }
+}
+
+/*@Composable
 fun SocialLinksGrid(icons: List<Pair<Int, String>>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -379,7 +421,7 @@ fun SocialLinkItem(icon: Int, label: String) {
             style = robotoRegular
         )
     }
-}
+}*/
 
 @Composable
 fun MiddleGradientBackground() {
@@ -414,7 +456,7 @@ fun ExpandableText(
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var clickable by remember { mutableStateOf(false) }
-    var lastCharIndex by remember { mutableStateOf(0) }
+    var lastCharIndex by remember { mutableIntStateOf(0) }
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -467,7 +509,7 @@ fun WavyCanvasView() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(216.dp)
             .background(Color.White)
     ) {
         Canvas(
@@ -515,18 +557,13 @@ fun WaveItems() {
             R.drawable.ic_nft,
             stringResource(R.string._350_nft_s),
             stringResource(R.string.to_be_won_during_this_airdrop)
-        ),
-        NtfItems(
+        ), NtfItems(
             R.drawable.ic_nft_2,
             stringResource(R.string._40000),
             stringResource(R.string._40000_desc)
-        ),
-        NtfItems(
-            R.drawable.ic_nft,
-            stringResource(R.string._2egld),
-            stringResource(R.string._2egld_desc)
-        ),
-        NtfItems(
+        ), NtfItems(
+            R.drawable.ic_nft, stringResource(R.string._2egld), stringResource(R.string._2egld_desc)
+        ), NtfItems(
             R.drawable.ic_nft_2,
             stringResource(R.string._350_nft_s),
             stringResource(R.string.to_be_won_during_this_airdrop)
@@ -545,8 +582,7 @@ fun WaveItems() {
                     .padding(horizontal = 5.sdp)
                     .background(
                         Color.White, shape = RoundedCornerShape(12.sdp)
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    ), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.height(6.sdp))
 
@@ -594,8 +630,7 @@ fun GradiantTitleText(strTitle: String) {
         )
 
         CvTextView(
-            txt = strTitle,
-            modifier = Modifier
+            txt = strTitle, modifier = Modifier
                 .graphicsLayer(alpha = 0.99f)
                 .drawWithCache {
                     val brush = Brush.horizontalGradient(
@@ -630,22 +665,19 @@ fun AirdropTimeline(strTitle: String) {
             remark = stringResource(R.string.airdrop_and_tasks_launch),
             bgColor = bgCalenderDeactiveColor,
             isSingleDigit = true
-        ),
-        CalenderView(
+        ), CalenderView(
             15,
             stringResource(R.string.apr_24),
             stringResource(R.string.start_of_ticket_sale),
             bgColor = bgCalenderActiveColor,
             isSingleDigit = false
-        ),
-        CalenderView(
+        ), CalenderView(
             21,
             stringResource(R.string.apr_24),
             stringResource(R.string.ticket_sale_closing),
             bgColor = bgCalenderActiveColor,
             isSingleDigit = false
-        ),
-        CalenderView(
+        ), CalenderView(
             day = 9,
             monthAndYear = stringResource(R.string.apr_24),
             remark = stringResource(R.string.airdrop_and_tasks_launch),
@@ -681,11 +713,7 @@ fun AirdropTimeline(strTitle: String) {
 
 @Composable
 fun NewCalenderView(
-    day: Int,
-    monthAndYear: String,
-    remark: String,
-    bgColor: Color,
-    isSingleDigit: Boolean
+    day: Int, monthAndYear: String, remark: String, bgColor: Color, isSingleDigit: Boolean
 ) {
 
     val roundedCornerRadius = 18.sdp
@@ -862,8 +890,7 @@ fun CustomTabBar() {
         ) {
             tabs.forEachIndexed { index, title ->
                 val interactionSource = remember { MutableInteractionSource() }
-                Row(
-                    horizontalArrangement = Arrangement.Start,
+                Row(horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .height(46.dp)
@@ -1055,10 +1082,9 @@ fun ExpandableTextView(
 fun HelpAndSupport() {
 
     Row(
-        modifier = Modifier
-            .border(
-                1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
-            ),
+        modifier = Modifier.border(
+            1.sdp, color = borderColor, shape = RoundedCornerShape(14.sdp)
+        ),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1094,9 +1120,7 @@ fun HelpAndSupport() {
         }
 
         CvImageView(
-            painter = R.drawable.ic_right_arrow,
-            stringResource(R.string.baer),
-            modifier = Modifier
+            painter = R.drawable.ic_right_arrow, stringResource(R.string.baer), modifier = Modifier
                 //.size(16.sdp)
                 .weight(0.1f)
                 .align(Alignment.CenterVertically)
@@ -1171,8 +1195,7 @@ fun NotifyViewWithTimer() {
             .background(bottomViewBgColor)
             .navigationBarsPadding()
             .fillMaxWidth()
-            .height(62.sdp),
-        contentAlignment = Alignment.BottomStart
+            .height(62.sdp), contentAlignment = Alignment.BottomStart
     ) {
         Row(
             modifier = Modifier
@@ -1183,8 +1206,7 @@ fun NotifyViewWithTimer() {
         ) {
 
             Row(
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.Center
+                verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.Center
             ) {
                 CvTextView(
                     txt = stringResource(R.string.available_in_bottom),
@@ -1361,8 +1383,7 @@ fun AirdropContent() {
                     CvImageView(
                         painter = R.drawable.ic_notify_icon,
                         contentDes = stringResource(R.string.more_about_bober_banner),
-                        modifier = Modifier
-                            .size(14.sdp)
+                        modifier = Modifier.size(14.sdp)
                     )
                 }
             }
